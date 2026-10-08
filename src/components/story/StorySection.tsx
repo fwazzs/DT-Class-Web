@@ -55,8 +55,9 @@ export default function StorySection(): ReactElement {
     return () => ro.disconnect();
   }, [reduced]);
 
-  // Mouse position (viewport px) and an eased copy that the box and notes turn toward. Touch is ignored,
-  // so a finger scrolling the page doesn't tilt anything.
+  // Pointer position (viewport px) and an eased copy that the box and notes turn toward. A mouse tilts
+  // while it hovers; a finger tilts while it touches, including while it scrolls the page (touch events
+  // keep firing then, unlike pointer events, which the browser cancels once a scroll starts).
   const mouse = useRef({ x: 0, y: 0, on: 0 });
   const eased = useRef<Pointer>({ x: 0, y: 0, s: 0 });
   useEffect(() => {
@@ -67,11 +68,23 @@ export default function StorySection(): ReactElement {
     const out = (e: PointerEvent): void => {
       if (!e.relatedTarget) mouse.current.on = 0; // left the window
     };
+    const touch = (e: TouchEvent): void => {
+      const t = e.touches[0];
+      mouse.current = t ? { x: t.clientX, y: t.clientY, on: 1 } : { ...mouse.current, on: 0 };
+    };
     window.addEventListener('pointermove', move, { passive: true });
     window.addEventListener('pointerout', out);
+    window.addEventListener('touchstart', touch, { passive: true });
+    window.addEventListener('touchmove', touch, { passive: true });
+    window.addEventListener('touchend', touch, { passive: true });
+    window.addEventListener('touchcancel', touch, { passive: true });
     return () => {
       window.removeEventListener('pointermove', move);
       window.removeEventListener('pointerout', out);
+      window.removeEventListener('touchstart', touch);
+      window.removeEventListener('touchmove', touch);
+      window.removeEventListener('touchend', touch);
+      window.removeEventListener('touchcancel', touch);
     };
   }, [reduced]);
 
