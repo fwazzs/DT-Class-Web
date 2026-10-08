@@ -19,7 +19,10 @@ export interface BoardVals extends Rect {
   scale: number;
 }
 export interface PosterVals extends Rect {
-  tagOpacity: number;
+  /** Class line above the title: focuses in (fade, rise, blur clearing) once the poster has landed. */
+  kickerOpacity: number;
+  kickerTransform: string;
+  kickerFilter: string;
   cueOpacity: number;
 }
 export interface PenVals {
@@ -160,20 +163,42 @@ function boardAndPoster(W: number, H: number, p: number, mobile: boolean): { boa
   const bw = W - bx * 2;
   const bh = H - by - (mobile ? 24 : 44);
   const tBoard = easeOutCubic(seg(p, 0.56, 0.7));
-  const pw = bw * (mobile ? 0.86 : 0.54);
-  const ph = bh * (mobile ? 0.38 : 0.52);
+  const pw = bw * (mobile ? 0.86 : 0.6);
+  const ph = bh * (mobile ? 0.44 : 0.56);
+  const k = easeOutCubic(seg(p, 0.68, 0.76)); // between the poster landing and the title being written
+  const blur = Math.round((1 - k) * 6 * 2) / 2;
   return {
     board: { x: bx, y: by, w: bw, h: bh, opacity: tBoard, scale: 0.94 + 0.06 * tBoard },
     poster: {
       x: bx + (bw - pw) / 2, y: by + (bh - ph) / 2, w: pw, h: ph,
-      tagOpacity: seg(p, 0.88, 0.96), cueOpacity: seg(p, 0.94, 1),
+      kickerOpacity: k,
+      kickerTransform: `translateY(${(1 - k) * 10}px)`,
+      kickerFilter: blur > 0 ? `blur(${blur.toFixed(1)}px)` : 'none',
+      cueOpacity: seg(p, 0.92, 1),
     },
   };
 }
 
+/** Poster padding and the height of everything on it except the two title lines (class line, cue, gaps). */
+export const POSTER_PAD = { mobile: 18, desktop: 32 } as const;
+// Mobile: the class line wraps to two lines.
+export const POSTER_REST = { mobile: 76, desktop: 76 } as const;
+/** Two lines at leading 0.98, plus room for the brush lettering's ascenders and descenders. */
+export const TITLE_LINES_EM = 2.1;
+
+/**
+ * Title size that fits the poster both ways: by width ("Thinking" is the long line) and by height, so on
+ * short screens the lettering never pushes the tag line under the tape or the cue off the paper.
+ */
+export function titleFontSize(posterW: number, posterH: number, mobile: boolean): number {
+  const pad = mobile ? POSTER_PAD.mobile : POSTER_PAD.desktop;
+  const byWidth = ((posterW - 2 * pad) * 116) / 600; // the design canvas's fit-to-width ratio
+  const byHeight = (posterH - 2 * pad - (mobile ? POSTER_REST.mobile : POSTER_REST.desktop)) / TITLE_LINES_EM;
+  return Math.max(22, Math.floor(Math.min(byWidth, byHeight)));
+}
+
 /** "Design" then "Thinking" are written left to right; a marker pen rides the wipe's edge. */
-function titleVals(p: number, posterW: number, mobile: boolean): TitleVals {
-  const textW = posterW - 2 * (mobile ? 18 : 32);
+function titleVals(p: number, posterW: number, posterH: number, mobile: boolean): TitleVals {
   const pen = (a: number, b: number): { clip: number; pen: PenVals } => {
     const e = easeInOutCubic(seg(p, a, b));
     return {
@@ -187,7 +212,7 @@ function titleVals(p: number, posterW: number, mobile: boolean): TitleVals {
   };
   const l1 = pen(0.76, 0.85);
   const l2 = pen(0.84, 0.94);
-  return { fontSize: Math.round((textW * 116) / 600), clip1: l1.clip, clip2: l2.clip, pen1: l1.pen, pen2: l2.pen };
+  return { fontSize: titleFontSize(posterW, posterH, mobile), clip1: l1.clip, clip2: l2.clip, pen1: l1.pen, pen2: l2.pen };
 }
 
 interface BoxResult {
@@ -434,7 +459,7 @@ export function storyFrame(progress: number, time: number, vw: number, vh: numbe
     wallTranslateY: -p * 90,
     board,
     poster,
-    title: titleVals(p, poster.w, mobile),
+    title: titleVals(p, poster.w, poster.h, mobile),
     box,
     glow,
     dust,

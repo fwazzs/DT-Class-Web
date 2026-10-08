@@ -37,9 +37,10 @@ export default function BoardPoster(): ReactElement {
         data-s="poster"
         className="absolute z-[2] box-border flex flex-col items-center justify-center gap-2 bg-paper p-[18px] text-center opacity-0 shadow-[0_1px_2px_rgba(40,30,20,0.2),0_14px_30px_-10px_rgba(40,30,20,0.35)] md:gap-3.5 md:p-8"
       >
-        <div aria-hidden="true" className={`${TAPE} -top-3 left-[16%] rotate-[-5deg]`} />
-        <div aria-hidden="true" className={`${TAPE} -top-2.5 right-[14%] rotate-[4deg]`} />
-        <p className="m-0 text-xs font-semibold uppercase tracking-[0.16em] text-muted">
+        {/* Tape sits on the corners, above the padding, so it never covers the tag line */}
+        <div aria-hidden="true" className={`${TAPE} -top-4 -left-3 rotate-[-38deg]`} />
+        <div aria-hidden="true" className={`${TAPE} -top-4 -right-3 rotate-[38deg]`} />
+        <p data-s="kicker" className="m-0 text-xs font-semibold uppercase tracking-[0.16em] text-muted opacity-0">
           {orPlaceholder(CLASS_INFO.name, 'Class name')} · {orPlaceholder(CLASS_INFO.semester, 'Semester')}
         </p>
         <h1
@@ -50,9 +51,6 @@ export default function BoardPoster(): ReactElement {
           <TitleLine text="Design" />
           <TitleLine text="Thinking" />
         </h1>
-        <p data-s="tagline" className="m-0 text-[15px] font-medium leading-[1.3] text-ink-soft opacity-0 md:text-[19px]">
-          Ten groups. Five phases. One wall of ideas.
-        </p>
         <p data-s="cue" className="m-0 flex items-center gap-1.5 text-sm font-semibold text-muted opacity-0">
           Scroll for the showcase
           <svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">

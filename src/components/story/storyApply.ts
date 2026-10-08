@@ -13,7 +13,7 @@ export interface StoryEls {
   title: HTMLElement;
   clips: HTMLElement[];
   pens: HTMLElement[];
-  tagline: HTMLElement;
+  kicker: HTMLElement;
   cue: HTMLElement;
   glow: HTMLElement;
   box: HTMLElement;
@@ -48,7 +48,7 @@ export function collectEls(root: HTMLElement): StoryEls {
   };
   return {
     camera: one('camera'), wall: one('wall'), board: one('board'), poster: one('poster'), title: one('title'),
-    clips: all('clip'), pens: all('pen'), tagline: one('tagline'), cue: one('cue'), glow: one('glow'),
+    clips: all('clip'), pens: all('pen'), kicker: one('kicker'), cue: one('cue'), glow: one('glow'),
     box: one('box'), cube: one('cube'), boxShadow: one('box-shadow'), boxContact: one('box-contact'),
     flapL: one('flap-l'), flapR: one('flap-r'), flapF: one('flap-f'), flapB: one('flap-b'),
     shadeL: one('shade-l'), shadeR: one('shade-r'), hint: one('hint'), hintIcon: one('hint-icon'),
@@ -119,7 +119,9 @@ function writeScene(e: StoryEls, f: StoryFrame): void {
   put(e.clips[1], 'clipPath', `inset(-30% ${ti.clip2}% -30% -8%)`);
   writePen(e.pens[0], ti.pen1);
   writePen(e.pens[1], ti.pen2);
-  put(e.tagline, 'opacity', String(po.tagOpacity));
+  put(e.kicker, 'opacity', String(po.kickerOpacity));
+  put(e.kicker, 'transform', po.kickerTransform);
+  put(e.kicker, 'filter', po.kickerFilter);
   put(e.cue, 'opacity', String(po.cueOpacity));
 
   put(e.hint, 'opacity', String(f.hintOpacity));

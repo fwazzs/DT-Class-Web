@@ -59,6 +59,9 @@ export default function StudentCard({ student, index, cardRef, pinRef }: Student
       <p className="mt-0.5 text-[11px] font-semibold tracking-[0.04em] text-muted tabular-nums md:text-xs">
         NRP {orPlaceholder(student.nrp, 'NRP')}
       </p>
+      <p className="mt-0.5 text-[11px] font-semibold tracking-[0.04em] text-muted tabular-nums md:text-xs">
+        {student.group ? `Group ${String(student.group).padStart(2, '0')}` : orPlaceholder(null, 'Group')}
+      </p>
     </li>
   );
 }

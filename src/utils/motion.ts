@@ -57,3 +57,21 @@ export function approach(current: number, target: number, maxStep: number): numb
   const d = target - current;
   return Math.abs(d) <= maxStep ? target : current + Math.sign(d) * maxStep;
 }
+
+export interface SpringState {
+  x: number;
+  /** Velocity in units per second. */
+  v: number;
+}
+
+/**
+ * Critically damped spring pulling `s` toward `target` for `dt` seconds: from rest it speeds up gently, then
+ * slows and settles without overshooting. Closed form, so it is exact and stable at any frame rate.
+ * `omega` (rad/s) is the stiffness: lower is slower to build up and slower to stop.
+ */
+export function spring(s: SpringState, target: number, omega: number, dt: number): SpringState {
+  const d = s.x - target;
+  const c = s.v + omega * d;
+  const e = Math.exp(-omega * dt);
+  return { x: target + (d + c * dt) * e, v: (s.v - omega * c * dt) * e };
+}

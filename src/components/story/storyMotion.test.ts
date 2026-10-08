@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { NOTE_WORDS, PINS_DESKTOP, PINS_MOBILE, NOTE_SIZE } from './storyData';
-import { storyFrame, tiltToward } from './storyMotion';
+import { POSTER_PAD, POSTER_REST, TITLE_LINES_EM, storyFrame, tiltToward } from './storyMotion';
 
 describe('tiltToward', () => {
   it('faces the cursor: right turns the face right (+ry), below turns it down (-rx)', () => {
@@ -89,13 +89,30 @@ describe('storyFrame', () => {
     const f = storyFrame(1, 0, 1440, 900);
     expect(f.board.opacity).toBe(1);
     expect(f.board.scale).toBe(1);
-    expect(f.poster.tagOpacity).toBe(1);
+    expect(f.poster.kickerOpacity).toBe(1);
+    expect(f.poster.kickerFilter).toBe('none');
+    expect(storyFrame(0, 0, 1440, 900).poster.kickerOpacity).toBe(0);
     expect(f.poster.cueOpacity).toBe(1);
     expect(f.title.clip1).toBeCloseTo(-8, 9);
     expect(f.title.clip2).toBeCloseTo(-8, 9);
     expect(f.title.pen1.opacity).toBe(0);
     expect(f.title.pen2.opacity).toBe(0);
     expect(f.hintOpacity).toBe(0);
+  });
+
+  it('keeps the final poster clear: no note covers it and the lettering fits inside it', () => {
+    for (const [vw, vh] of [...SIZES, [1366, 657], [1280, 720], [1920, 1080]] as const) {
+      const f = storyFrame(1, 0, vw, vh);
+      const { x, y, w, h } = f.poster;
+      const size = f.mobile ? NOTE_SIZE.mobile : NOTE_SIZE.desktop;
+      f.notes.forEach((n, i) => {
+        const overlaps = n.left < x + w && n.left + size > x && n.top < y + h && n.top + size > y;
+        expect(overlaps, `note ${i} at ${vw}x${vh}`).toBe(false);
+      });
+      const pad = f.mobile ? POSTER_PAD.mobile : POSTER_PAD.desktop;
+      const rest = f.mobile ? POSTER_REST.mobile : POSTER_REST.desktop;
+      expect(TITLE_LINES_EM * f.title.fontSize + rest + 2 * pad, `title at ${vw}x${vh}`).toBeLessThanOrEqual(h);
+    }
   });
 
   it('keeps the title hidden and the board invisible at p=0', () => {

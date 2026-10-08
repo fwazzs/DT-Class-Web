@@ -7,6 +7,7 @@ import { useFrame } from '@/hooks/useFrame';
 import { usePageTop } from '@/hooks/usePageTop';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { seenPx } from '@/utils/motion';
+import { tiltToward, type Pointer } from '@/components/story/storyMotion';
 import StudentCard from './StudentCard';
 import { buildRevealLayout, cardReveal, revealProgress, type RevealLayout } from './studentsMotion';
 
@@ -22,7 +23,15 @@ export default function StudentsSection(): React.JSX.Element {
   const pinRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const layoutRef = useRef<RevealLayout | null>(null);
   const lastSeen = useRef(Number.NaN);
+  const lastScroll = useRef(Number.NaN);
   const pageTop = usePageTop(sectionRef);
+  // Card centres relative to the section (x in viewport px, y from the section top) and the section height,
+  // cached so frames never read layout.
+  const centers = useRef<{ x: number; y: number; r: number }[]>([]);
+  const sectionHeight = useRef(0);
+  // Mouse position (viewport px) and an eased copy the cards turn toward, as in the story's box and notes.
+  const mouse = useRef({ x: 0, y: 0, on: 0 });
+  const eased = useRef<Pointer>({ x: 0, y: 0, s: 0 });
 
   // Measure the rendered layout (wrapping differs per breakpoint) instead of hard-coding row heights.
   useEffect(() => {
@@ -31,11 +40,19 @@ export default function StudentsSection(): React.JSX.Element {
     if (!section || !grid) return;
     const measure = (): void => {
       const cards = cardRefs.current.filter((c): c is HTMLLIElement => c !== null);
-      const gridTop = grid.getBoundingClientRect().top - section.getBoundingClientRect().top;
+      const s = section.getBoundingClientRect();
+      const g = grid.getBoundingClientRect();
+      const gridTop = g.top - s.top;
       layoutRef.current = buildRevealLayout(
         gridTop,
         cards.map((c) => c.offsetTop),
       );
+      centers.current = cards.map((c) => ({
+        x: g.left + c.offsetLeft + c.offsetWidth / 2,
+        y: gridTop + c.offsetTop + c.offsetHeight / 2,
+        r: c.offsetWidth,
+      }));
+      sectionHeight.current = s.height;
       lastSeen.current = Number.NaN;
     };
     measure();
@@ -56,20 +73,64 @@ export default function StudentsSection(): React.JSX.Element {
     pinRefs.current.forEach((p) => p?.style.removeProperty('opacity'));
   }, [reduced]);
 
+  useEffect(() => {
+    if (reduced) return;
+    const move = (e: PointerEvent): void => {
+      if (e.pointerType === 'mouse') mouse.current = { x: e.clientX, y: e.clientY, on: 1 };
+    };
+    const out = (e: PointerEvent): void => {
+      if (!e.relatedTarget) mouse.current.on = 0; // left the window
+    };
+    window.addEventListener('pointermove', move, { passive: true });
+    window.addEventListener('pointerout', out);
+    return () => {
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerout', out);
+    };
+  }, [reduced]);
+
   useFrame(({ vh, scrollY }) => {
     const section = sectionRef.current;
     const layout = layoutRef.current;
     if (!section || !layout) return;
+    const top = pageTop.current - scrollY;
+    if (top > vh || top + sectionHeight.current < 0) {
+      lastSeen.current = Number.NaN; // off-screen: repaint on return so no stale tilt is left behind
+      return;
+    }
+
+    // Ease toward the mouse, landing exactly once close so idle frames are skipped again.
+    const m = mouse.current;
+    const e = eased.current;
+    if (e.s === 0) {
+      e.x = m.x; // appearing: start at the cursor rather than sweeping in from where it left
+      e.y = m.y;
+    }
+    const ease = (a: number, b: number, snap: number): number => (Math.abs(b - a) < snap ? b : a + (b - a) * 0.18);
+    const px = e.x;
+    const py = e.y;
+    const ps = e.s;
+    e.x = ease(e.x, m.x, 0.05);
+    e.y = ease(e.y, m.y, 0.05);
+    e.s = ease(e.s, m.on, 0.002);
+    // The cursor stays put on screen while the page scrolls, so a scroll moves it across the cards too.
+    const pointerMoved = e.x !== px || e.y !== py || e.s !== ps;
+
     // Clamping to doneAt means nothing is rewritten once the wall is complete (or still below the fold).
-    const seen = Math.min(Math.max(seenPx(pageTop.current - scrollY, vh), 0), layout.doneAt);
-    if (seen === lastSeen.current) return;
+    const seen = Math.min(Math.max(seenPx(top, vh), 0), layout.doneAt);
+    if (seen === lastSeen.current && !pointerMoved && (e.s === 0 || scrollY === lastScroll.current)) return;
     lastSeen.current = seen;
+    lastScroll.current = scrollY;
+    const ptr = e.s > 0 ? e : null;
     cardRefs.current.forEach((card, i) => {
       if (!card) return;
       const r = revealProgress(seen, layout.gridTop, layout.offsets[i], layout.cols[i]);
       const v = cardReveal(r, i);
+      const c = centers.current[i];
+      const tilt = c ? tiltToward(ptr, c.x, top + c.y, c.r, 18) : { rx: 0, ry: 0 };
       card.style.opacity = String(v.opacity);
-      card.style.transform = v.transform;
+      card.style.transform =
+        tilt.rx || tilt.ry ? `${v.transform} perspective(700px) rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg)` : v.transform;
       card.style.boxShadow = v.settled ? '' : RAISED_SHADOW;
       const pin = pinRefs.current[i];
       if (pin) pin.style.opacity = String(v.pinOpacity);

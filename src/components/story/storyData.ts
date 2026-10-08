@@ -39,17 +39,18 @@ export const NOTE_WORDS: readonly StoryNoteWord[] = [
   { text: 'SCAMPER', phase: 'ideate' },
 ];
 
-/** Landing spots in % of the board. They ring the poster; four overlap its corners. */
+/** Landing spots in % of the board. They ring the poster (x 20–80, y 22–78) without covering it. */
 export const PINS_DESKTOP: ReadonlyArray<readonly [number, number]> = [
-  [8, 12], [19, 15], [30, 11], [41, 14], [52, 11], [63, 15], [74, 12], [85, 15], [94, 11],
-  [7, 88], [18, 85], [29, 89], [40, 86], [51, 89], [62, 85], [73, 88], [84, 86], [94, 89],
-  [8, 33], [10, 51], [8, 69], [92, 33], [90, 51], [92, 69],
-  [23, 29], [77, 27], [24, 73], [76, 74],
+  [8, 10], [19, 12], [30, 9], [41, 11], [52, 9], [63, 12], [74, 10], [85, 12], [94, 9],
+  [7, 90], [18, 88], [29, 91], [40, 89], [51, 91], [62, 88], [73, 90], [84, 89], [94, 91],
+  [7, 34], [9, 51], [7, 68], [93, 34], [91, 51], [93, 68],
+  [12, 27], [88, 27], [12, 74], [88, 74],
 ];
 
+/** Mobile: two rows above and two below the poster (y 28–72). */
 export const PINS_MOBILE: ReadonlyArray<readonly [number, number]> = [
-  [15, 9], [38, 10], [62, 9], [85, 10], [26, 21], [50, 22], [74, 21],
-  [26, 79], [50, 78], [74, 79], [15, 91], [38, 90], [62, 91], [85, 90],
+  [15, 8], [38, 9], [62, 8], [85, 9], [26, 19], [50, 20], [74, 19],
+  [26, 81], [50, 80], [74, 81], [15, 92], [38, 91], [62, 92], [85, 91],
 ];
 
 /** Notes that rush past the camera: [target x as fraction of width, target y as fraction of height, phase]. */

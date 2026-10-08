@@ -130,7 +130,12 @@ function Dust(): ReactElement {
   );
 }
 
-export default function CardboardBox(): ReactElement {
+interface CardboardBoxProps {
+  /** Called on click: the section shakes the box and plays the opening. A pointer shortcut only: keyboard users scroll as usual. */
+  onOpen?: () => void;
+}
+
+export default function CardboardBox({ onOpen }: CardboardBoxProps): ReactElement {
   return (
     <>
       <Glow />
@@ -138,7 +143,8 @@ export default function CardboardBox(): ReactElement {
       <div
         aria-hidden="true"
         data-s="box"
-        className="absolute z-[3] size-[var(--s)] opacity-0 [--h:75px] [--lf:11px] [--s:150px] [--sf:8px] [perspective:1100px] md:[--h:115px] md:[--lf:17px] md:[--s:230px] md:[--sf:12px]"
+        onClick={onOpen}
+        className="absolute z-[3] size-[var(--s)] cursor-pointer opacity-0 [--h:75px] [--lf:11px] [--s:150px] [--sf:8px] [perspective:1100px] md:[--h:115px] md:[--lf:17px] md:[--s:230px] md:[--sf:12px]"
       >
         {/* tight contact shadow + soft ambient shadow */}
         <div data-s="box-shadow" className="absolute left-[-16%] top-[80%] h-[34%] w-[132%] rounded-full bg-[radial-gradient(closest-side,rgba(40,30,20,0.28),rgba(40,30,20,0))]" />

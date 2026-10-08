@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useId, useRef } from 'react';
 import { STUDENTS } from '@/data/site';
 import type { Student } from '@/types';
 import { useFrame } from '@/hooks/useFrame';
@@ -8,7 +8,6 @@ import { usePageTop } from '@/hooks/usePageTop';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { seenPx } from '@/utils/motion';
 import FeedbackRow from './FeedbackRow';
-import PlayPauseButton from './PlayPauseButton';
 import { ROW_SPEED, advanceTravel, marqueeX, thanksEnter, titleClipPath } from './thanksMotion';
 
 const HALF = Math.ceil(STUDENTS.length / 2);
@@ -26,7 +25,6 @@ const EDGE_FADE =
 export default function ThanksSection(): React.JSX.Element {
   const titleId = useId();
   const reduced = useReducedMotion();
-  const [playing, setPlaying] = useState(true);
   const sectionRef = useRef<HTMLElement>(null);
   const bannerRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
@@ -89,7 +87,7 @@ export default function ThanksSection(): React.JSX.Element {
     if (entering && endRef.current) endRef.current.style.opacity = String(enter.endOpacity);
 
     ROWS.forEach((_, k) => {
-      if (playing && !rowPaused.current[k]) travel.current[k] = advanceTravel(travel.current[k], dt, ROW_SPEED[k]);
+      if (!rowPaused.current[k]) travel.current[k] = advanceTravel(travel.current[k], dt, ROW_SPEED[k]);
       const list = listRefs.current[k];
       const wrapper = wrapperRefs.current[k];
       if (list) list.style.transform = `translateX(${marqueeX(k as 0 | 1, travel.current[k], periods.current[k], enter.rowSlide[k])}px)`;
@@ -151,8 +149,6 @@ export default function ThanksSection(): React.JSX.Element {
           />
         ))}
       </div>
-
-      {!reduced && <PlayPauseButton playing={playing} onToggle={() => setPlaying((p) => !p)} />}
 
       <p
         ref={endRef}

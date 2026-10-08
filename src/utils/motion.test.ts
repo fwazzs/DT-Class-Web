@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { clamp01, easeInOutCubic, easeOutBack, isMobileWidth, pinnedProgress, rnd, seenPx, seg } from './motion';
+import { clamp01, spring, easeInOutCubic, easeOutBack, isMobileWidth, pinnedProgress, rnd, seenPx, seg } from './motion';
 
 describe('motion helpers', () => {
   it('clamps and segments', () => {
@@ -40,5 +40,29 @@ describe('motion helpers', () => {
     expect(seenPx(100, 900)).toBe(800);
     expect(isMobileWidth(390)).toBe(true);
     expect(isMobileWidth(768)).toBe(false);
+  });
+});
+
+describe('spring', () => {
+  it('eases in from rest, then eases out and lands on the target without overshooting', () => {
+    let s = { x: 0, v: 0 };
+    const speeds: number[] = [];
+    for (let i = 0; i < 240; i++) {
+      s = spring(s, 1000, 3.5, 1 / 60);
+      speeds.push(s.v);
+      expect(s.x).toBeLessThanOrEqual(1000);
+    }
+    const peak = speeds.indexOf(Math.max(...speeds));
+    expect(peak).toBeGreaterThan(5); // builds up over several frames instead of jumping to full speed
+    expect(speeds[peak + 30]).toBeLessThan(speeds[peak]); // then slows down
+    expect(s.x).toBeGreaterThan(999); // and arrives within 4s
+  });
+
+  it('is frame-rate independent', () => {
+    let a = { x: 0, v: 0 };
+    for (let i = 0; i < 60; i++) a = spring(a, 500, 3.5, 1 / 60);
+    let b = { x: 0, v: 0 };
+    for (let i = 0; i < 144; i++) b = spring(b, 500, 3.5, 1 / 144);
+    expect(a.x).toBeCloseTo(b.x, 6);
   });
 });

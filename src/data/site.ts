@@ -4,7 +4,7 @@ import type { ClassInfo, Group, Lecturer, Phase, Student } from '@/types';
 
 export const CLASS_INFO: ClassInfo = {
   name: 'Design Thinking Class C',
-  semester: 'First Semester, 2026',
+  semester: '2026',
   courseCode: null,
   department: null,
   university: null,
