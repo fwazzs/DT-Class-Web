@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Footer</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&amp;family=Caveat:wght@500;700&amp;family=Kaushan+Script&amp;family=Permanent+Marker&amp;family=Pinyon+Script&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<footer style="position: relative; width: {{W}}px; box-sizing: border-box; padding-top: 28px; background-color: transparent; font-family: 'Bricolage Grotesque', system-ui, sans-serif; color: #ECEBE8">
+  <!-- Torn paper edge into the dark footer -->
+  <div aria-hidden="true" style="position: absolute; left: 0; top: 0; width: 100%; height: 30px; background-color: #17181A; clip-path: {{torn}}"></div>
+
+  <div style="background-color: #17181A; padding: {{L.pad}}">
+    <div style="display: flex; flex-wrap: wrap; gap: {{L.colGap}}px; justify-content: space-between">
+      <!-- Brand -->
+      <div style="flex: 1 1 {{L.brandBasis}}px; min-width: 0; display: flex; flex-direction: column; gap: 14px">
+        <p style="margin: 0; display: flex; align-items: center; gap: 12px; font-size: 15px; font-weight: 650">
+          <span aria-hidden="true" style="width: 18px; height: 18px; background-color: #FFE45C; transform: rotate(-6deg); box-shadow: 0 2px 4px rgba(0,0,0,0.4)"></span>
+          Design Thinking Class C
+        </p>
+        <p style="margin: 0; font-family: 'Kaushan Script', cursive; font-size: {{L.mark}}px; line-height: 1.05; color: #FBFAF6">Keep it human.</p>
+        <p style="margin: 0; max-width: 30em; font-size: 15px; line-height: 1.5; color: #B9B6AF">A semester of interviews, sticky notes, paper prototypes and honest tests. First Semester, 2026.</p>
+        <div aria-label="The five phases" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px">
+          <sc-for list="{{phases}}" as="ph" hint-placeholder-count="5">
+            <span style="padding: 6px 10px; background-color: {{ph.c}}; color: #1F1B16; font-family: 'Caveat', cursive; font-weight: 700; font-size: 18px; line-height: 1; transform: rotate({{ph.r}}deg); box-shadow: 0 2px 4px rgba(0,0,0,0.35)">{{ph.n}}</span>
+          </sc-for>
+        </div>
+      </div>
+
+      <!-- Explore -->
+      <nav aria-label="Footer" style="flex: 0 1 180px; display: flex; flex-direction: column; gap: 4px">
+        <p style="margin: 0 0 8px; font-size: 12px; font-weight: 650; letter-spacing: 0.16em; text-transform: uppercase; color: #8E8B84">Explore</p>
+        <a href="#showcase" style="display: inline-flex; align-items: center; min-height: 40px; font-size: 16px; font-weight: 550; color: #ECEBE8; text-underline-offset: 4px">Group showcase</a>
+        <a href="#lecturer" style="display: inline-flex; align-items: center; min-height: 40px; font-size: 16px; font-weight: 550; color: #ECEBE8; text-underline-offset: 4px">Lecturer</a>
+        <a href="#students" style="display: inline-flex; align-items: center; min-height: 40px; font-size: 16px; font-weight: 550; color: #ECEBE8; text-underline-offset: 4px">Students</a>
+        <a href="#thanks" style="display: inline-flex; align-items: center; min-height: 40px; font-size: 16px; font-weight: 550; color: #ECEBE8; text-underline-offset: 4px">Thank you</a>
+      </nav>
+
+      <!-- Class -->
+      <div style="flex: 0 1 220px; display: flex; flex-direction: column; gap: 4px">
+        <p style="margin: 0 0 8px; font-size: 12px; font-weight: 650; letter-spacing: 0.16em; text-transform: uppercase; color: #8E8B84">Class</p>
+        <p style="margin: 0; min-height: 40px; display: flex; align-items: center; font-size: 16px; color: #ECEBE8">[Course code] · Design Thinking</p>
+        <p style="margin: 0; min-height: 40px; display: flex; align-items: center; font-size: 16px; color: #ECEBE8">[Department]</p>
+        <p style="margin: 0; min-height: 40px; display: flex; align-items: center; font-size: 16px; color: #ECEBE8">[University]</p>
+        <a href="mailto:[email]" style="display: inline-flex; align-items: center; min-height: 40px; font-size: 16px; font-weight: 550; color: #ECEBE8; text-underline-offset: 4px">[Class email]</a>
+      </div>
+
+      <!-- Back to top: a sticky note -->
+      <div style="flex: 0 0 auto; display: flex; align-items: flex-start">
+        <a href="#top" style="position: relative; width: 132px; height: 132px; box-sizing: border-box; padding: 14px; display: flex; flex-direction: column; justify-content: space-between; background-color: #FFE45C; background-image: linear-gradient(180deg, rgba(0,0,0,0.07), rgba(0,0,0,0) 22%); color: #1F1B16; text-decoration: none; transform: rotate(4deg); box-shadow: 0 2px 3px rgba(0,0,0,0.35), 0 16px 24px -10px rgba(0,0,0,0.6)">
+          <span aria-hidden="true" style="position: absolute; left: 32%; top: -10px; width: 36%; height: 20px; background-color: rgba(240,234,218,0.85); transform: rotate(-4deg)"></span>
+          <svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V5M5 11l7-7 7 7"></path></svg>
+          <span style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 24px; line-height: 1">Back to the top</span>
+        </a>
+      </div>
+    </div>
+
+    <div style="margin-top: {{L.barTop}}px; padding-top: 20px; border-top: 1px dashed rgba(236,235,232,0.25); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; font-size: 14px; color: #8E8B84">
+      <p style="margin: 0">© 2026 Design Thinking Class C. Made by 10 groups and 50 students.</p>
+      <p style="margin: 0">Built on paper first.</p>
+    </div>
+  </div>
+</footer>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"width":{"editor":null,"default":1440},"$preview":{"width":1440,"height":470}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const W = Number(this.props.width ?? 1440);
+    const mobile = W < 700;
+    const rnd = (i) => { const r = Math.sin(i * 12.9898 + 4 * 78.233) * 43758.5453; return r - Math.floor(r); };
+    const pts = [];
+    const n = mobile ? 24 : 60;
+    for (let i = 0; i <= n; i++) pts.push((i / n) * 100 + '% ' + (20 + rnd(i) * 75).toFixed(1) + '%');
+    return {
+      W,
+      torn: 'polygon(0 100%, ' + pts.join(', ') + ', 100% 100%)',
+      L: mobile
+        ? { pad: '28px 20px 32px', colGap: 32, brandBasis: 340, mark: 40, barTop: 32 }
+        : { pad: '40px 64px 36px', colGap: 56, brandBasis: 420, mark: 56, barTop: 48 },
+      phases: [
+        { n: 'Empathize', c: '#FFE45C', r: -3 },
+        { n: 'Define', c: '#FF8FB1', r: 2 },
+        { n: 'Ideate', c: '#7CC8FF', r: -1.5 },
+        { n: 'Prototype', c: '#8EE07A', r: 3 },
+        { n: 'Test', c: '#FFA552', r: -2 },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

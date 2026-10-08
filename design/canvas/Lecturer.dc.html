@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lecturer profile</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&amp;family=Caveat:wght@500;700&amp;family=Kaushan+Script&amp;family=Permanent+Marker&amp;family=Pinyon+Script&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div style="position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; background-color: #E9E6DF; background-image: radial-gradient(rgba(23,24,26,0.14) 1px, transparent 1.4px); background-size: 22px 22px; font-family: 'Bricolage Grotesque', system-ui, sans-serif; color: #17181A">
+  <div aria-hidden="true" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-image: radial-gradient(70% 60% at 78% 10%, rgba(255,248,228,0.7), rgba(255,248,228,0) 70%), radial-gradient(130% 110% at 50% 45%, rgba(0,0,0,0) 55%, rgba(70,52,34,0.16) 100%)"></div>
+  <svg aria-hidden="true" width="100%" height="100%" style="position: absolute; left: 0; top: 0; opacity: 0.55; mix-blend-mode: multiply; pointer-events: none; will-change: transform">
+    <filter id="dt-grain-lecturer"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"></feTurbulence><feColorMatrix type="saturate" values="0"></feColorMatrix><feComponentTransfer><feFuncA type="linear" slope="0.28"></feFuncA></feComponentTransfer></filter>
+    <rect width="100%" height="100%" filter="url(#dt-grain-lecturer)"></rect>
+  </svg>
+
+  <!-- Page edges stacked behind (the "next pages" of the magazine) -->
+  <div aria-hidden="true" style="position: absolute; left: {{pg.x}}px; top: {{pg.y}}px; width: {{pg.w}}px; height: {{pg.h}}px; transform: translate(10px, 8px) rotate(0.6deg); background-color: #F1EEE6; box-shadow: 0 1px 2px rgba(40,30,20,0.15); opacity: {{pg.under}}"></div>
+  <div aria-hidden="true" style="position: absolute; left: {{pg.x}}px; top: {{pg.y}}px; width: {{pg.w}}px; height: {{pg.h}}px; transform: translate(5px, 4px) rotate(0.3deg); background-color: #F6F3EC; box-shadow: 0 1px 2px rgba(40,30,20,0.15); opacity: {{pg.under}}"></div>
+
+  <!-- The page itself: turns in like a magazine page -->
+  <section aria-label="Lecturer profile" style="position: absolute; left: {{pg.x}}px; top: {{pg.y}}px; width: {{pg.w}}px; height: {{pg.h}}px; background-color: #FBFAF6; box-shadow: 0 2px 4px rgba(40,30,20,0.12), 0 40px 70px -30px rgba(40,30,20,0.45); transform-origin: {{pg.origin}}; transform: {{pg.tf}}; opacity: {{pg.op}}">
+    <div aria-hidden="true" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-image: linear-gradient(90deg, rgba(40,30,20,0.18), rgba(40,30,20,0) 6%); pointer-events: none"></div>
+
+    <!-- Side tab -->
+    <sc-if value="{{desktop}}" hint-placeholder-val="{{ true }}">
+      <div aria-hidden="true" style="position: absolute; right: 0; top: 0; width: 64px; height: 100%; background-color: #FFE45C; background-image: linear-gradient(90deg, rgba(0,0,0,0.08), rgba(0,0,0,0) 30%); display: flex; align-items: center; justify-content: center">
+        <span style="transform: rotate(90deg); white-space: nowrap; font-size: 13px; font-weight: 700; letter-spacing: 0.3em; text-transform: uppercase; color: #1F1B16">03 · Lecturer · Design Thinking Class C</span>
+      </div>
+    </sc-if>
+
+    <!-- Photo: a paper cut-out -->
+    <div style="position: absolute; left: {{ph.x}}px; top: {{ph.y}}px; width: {{ph.w}}px; height: {{ph.h}}px; transform: {{ph.tf}}; opacity: {{ph.op}}; filter: drop-shadow(0 3px 2px rgba(40,30,20,0.25)) drop-shadow(0 18px 18px rgba(40,30,20,0.22))">
+      <div style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: #FDFCF8; clip-path: {{ph.clip}}">
+        <div style="position: absolute; left: 14px; top: 14px; right: 14px; bottom: 14px; background-color: #CFCAC0; background-image: repeating-linear-gradient(135deg, rgba(23,24,26,0.05) 0 2px, transparent 2px 12px); clip-path: {{ph.clipIn}}; overflow: hidden">
+          <svg aria-hidden="true" width="100%" height="100%" viewBox="0 0 300 400" preserveAspectRatio="xMidYMax meet" style="position: absolute; left: 0; bottom: 0"><circle cx="150" cy="150" r="62" fill="#9C968B"></circle><path d="M30 400 C34 290 86 240 150 240 C214 240 266 290 270 400Z" fill="#9C968B"></path></svg>
+          <span style="position: absolute; left: 12px; top: 12px; padding: 4px 8px; background-color: rgba(251,250,246,0.92); font-size: 12px; font-weight: 500; color: #55534E">[Lecturer photo]</span>
+        </div>
+      </div>
+      <div aria-hidden="true" style="position: absolute; left: 34%; top: -12px; width: 96px; height: 26px; background-color: rgba(238,232,214,0.85); transform: rotate(-6deg); box-shadow: 0 1px 1px rgba(0,0,0,0.08); opacity: {{ph.tape}}"></div>
+    </div>
+
+    <!-- Title -->
+    <div style="position: absolute; left: {{tt.x}}px; top: {{tt.y}}px; width: {{tt.w}}px; display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; ">
+      <p style="margin: 0; font-size: 13px; font-weight: 650; letter-spacing: 0.16em; text-transform: uppercase; color: #3B3934">03 — Meet the lecturer</p>
+      <h2 style="margin: 0; font-family: 'Kaushan Script', cursive; font-weight: 400; font-size: {{tt.size}}px; line-height: 1.05; clip-path: inset(-30% {{tt.clip}}% -30% -8%)">Lecturer Profile</h2>
+    </div>
+
+    <!-- Bio on ruled notebook paper -->
+    <div style="position: absolute; left: {{cd.x}}px; top: {{cd.y}}px; width: {{cd.w}}px; height: {{cd.h}}px; box-sizing: border-box; padding: 30px 28px 24px 64px; background-color: #FFFEFA; background-image: linear-gradient(90deg, transparent 47px, rgba(210,70,60,0.45) 47px, rgba(210,70,60,0.45) 49px, transparent 49px), repeating-linear-gradient(180deg, transparent 0 31px, rgba(80,120,190,0.25) 31px 32px); background-position: 0 0, 0 30px; box-shadow: 0 2px 3px rgba(40,30,20,0.18), 0 22px 36px -16px rgba(40,30,20,0.4); transform: {{cd.tf}}; opacity: {{cd.op}}; display: flex; flex-direction: column; line-height: 32px">
+      <div aria-hidden="true" style="position: absolute; left: 42%; top: -13px; width: 110px; height: 26px; background-color: rgba(255,143,177,0.6); background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.45) 0 6px, rgba(255,255,255,0) 6px 14px); transform: rotate(3deg); box-shadow: 0 1px 1px rgba(0,0,0,0.08); opacity: {{cd.tape}}"></div>
+      <h3 style="margin: 0; font-size: {{cd.name}}px; font-weight: 750; letter-spacing: -0.02em; line-height: 32px">[Lecturer name]</h3>
+      <p style="margin: 0; font-size: 15px; font-weight: 600; color: #3B3934">[Title · Department, University]</p>
+      <p style="margin: 0; font-family: 'Caveat', cursive; font-weight: 700; font-size: {{cd.body}}px; color: #23201B">[Short bio: teaching focus, research, and what they hope students take from Design Thinking.]</p>
+      <div style="margin-top: auto; display: flex; flex-wrap: wrap; gap: 8px; line-height: 1.2">
+        <span style="padding: 6px 10px; background-color: #FFE45C; font-size: 13px; font-weight: 650">Design Thinking</span>
+        <span style="padding: 6px 10px; background-color: #7CC8FF; font-size: 13px; font-weight: 650">[Expertise]</span>
+        <a href="mailto:[email]" style="display: inline-flex; align-items: center; min-height: 32px; padding: 0 10px; font-size: 13px; font-weight: 650; color: #17181A; text-underline-offset: 3px">[Email]</a>
+      </div>
+    </div>
+  </section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"enter":{"editor":"range","min":0,"max":1,"step":0.01,"default":1},"width":{"editor":null,"default":1440},"height":{"editor":null,"default":900},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const W = Number(this.props.width ?? 1440);
+    const H = Number(this.props.height ?? 900);
+    const e = Math.min(1, Math.max(0, Number(this.props.enter ?? 1)));
+    const mobile = W < 700;
+    const clamp = (v) => Math.min(1, Math.max(0, v));
+    const seg = (v, a, b) => clamp((v - a) / (b - a));
+    const inOut = (v) => (v < 0.5 ? 4 * v * v * v : 1 - Math.pow(-2 * v + 2, 3) / 2);
+    const outBack = (v) => { const c = 1.70158; return 1 + (c + 1) * Math.pow(v - 1, 3) + c * Math.pow(v - 1, 2); };
+    const rnd = (i, k) => { const r = Math.sin(i * 12.9898 + k * 78.233) * 43758.5453; return r - Math.floor(r); };
+
+    // Torn-paper outline: a jittered rectangle, deterministic so it never flickers.
+    const torn = (seed, j) => {
+      const pts = [];
+      const n = 14;
+      for (let i = 0; i <= n; i++) pts.push([(i / n) * 100, rnd(i, seed) * j]);
+      for (let i = 1; i <= n; i++) pts.push([100 - rnd(i, seed + 1) * j * 0.7, (i / n) * 100]);
+      for (let i = n - 1; i >= 0; i--) pts.push([(i / n) * 100, 100 - rnd(i, seed + 2) * j]);
+      for (let i = n - 1; i >= 1; i--) pts.push([rnd(i, seed + 3) * j * 0.7, (i / n) * 100]);
+      return 'polygon(' + pts.map(([a, b]) => a.toFixed(1) + '% ' + b.toFixed(1) + '%').join(', ') + ')';
+    };
+
+    // Page: turns in from the left spine.
+    const pgx = mobile ? 12 : 64;
+    const pgy = mobile ? 20 : 64;
+    const pgw = W - pgx * 2;
+    const pgh = H - pgy * 2;
+    const eP = inOut(seg(e, 0, 0.6));
+    const pg = {
+      x: pgx, y: pgy, w: pgw, h: pgh,
+      origin: '0% 50%',
+      tf: 'perspective(1800px) rotateY(' + -(1 - eP) * 100 + 'deg)',
+      op: Math.min(1, e * 4),
+      under: Math.min(1, e * 2),
+    };
+
+    // Photo cut-out slides in and tilts into place.
+    const ePh = outBack(seg(e, 0.35, 0.85));
+    const phw = mobile ? 210 : 380;
+    const phh = mobile ? 260 : 560;
+    const ph = {
+      x: mobile ? (pgw - phw) / 2 : 56, y: mobile ? 128 : pgh - phh - 40, w: phw, h: phh,
+      tf: 'translateX(' + -(1 - ePh) * 160 + 'px) rotate(' + (-3 - (1 - ePh) * 14) + 'deg) scale(' + (0.9 + 0.1 * ePh) + ')',
+      op: clamp(ePh * 3),
+      tape: seg(e, 0.8, 0.9), clip: torn(51, 2.4), clipIn: torn(61, 1.2),
+    };
+
+    // Title is written in, like the story's lettering.
+    const tw = mobile ? pgw - 32 : 520;
+    const tt = {
+      x: mobile ? 16 : 500, y: mobile ? 24 : 70, w: tw, size: mobile ? 44 : 76,
+      clip: 108 - 116 * inOut(seg(e, 0.45, 0.9)),
+    };
+
+    // Bio card drops onto the page like a note.
+    const eC = outBack(seg(e, 0.5, 1));
+    const cd = {
+      x: mobile ? 16 : 510, y: mobile ? 410 : 250, w: mobile ? pgw - 32 : 520, h: mobile ? 380 : 420,
+      name: mobile ? 22 : 28, body: mobile ? 20 : 23,
+      tf: 'translateY(' + -(1 - eC) * 120 + 'px) rotate(' + (1.5 + (1 - eC) * 10) + 'deg)',
+      op: clamp(eC * 3), tape: seg(e, 0.9, 1),
+    };
+
+
+    return { W, H, desktop: !mobile, pg, ph, tt, cd };
+  }
+}
+</script>
+</body>
+</html>

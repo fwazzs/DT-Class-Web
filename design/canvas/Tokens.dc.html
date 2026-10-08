@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Style tile</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&amp;family=Caveat:wght@500;700&amp;family=Kaushan+Script&amp;family=Permanent+Marker&amp;family=Pinyon+Script&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div style="width: 1280px; height: 760px; box-sizing: border-box; padding: 48px 56px; background-color: #ECEBE8; font-family: 'Bricolage Grotesque', system-ui, sans-serif; color: #17181A; display: flex; flex-direction: column; gap: 32px">
+  <h1 style="margin: 0; font-size: 32px; font-weight: 750; letter-spacing: -0.02em">Style tile — sticky note × wall magazine</h1>
+
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 48px">
+    <div style="display: flex; flex-direction: column; gap: 24px">
+      <section style="display: flex; flex-direction: column; gap: 12px">
+        <h2 style="margin: 0; font-size: 13px; font-weight: 650; letter-spacing: 0.16em; text-transform: uppercase; color: #55534E">Notes — one color per phase</h2>
+        <div style="display: flex; gap: 14px">
+          <sc-for list="{{phases}}" as="ph" hint-placeholder-count="5">
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <div style="width: 96px; height: 96px; box-sizing: border-box; padding: 10px; display: flex; align-items: flex-end; background-color: {{ph.hex}}; background-image: linear-gradient(180deg, rgba(0,0,0,0.07), rgba(0,0,0,0) 24%); box-shadow: 0 1px 2px rgba(40,30,20,0.28), 0 4px 10px rgba(40,30,20,0.14); transform: rotate({{ph.rot}}deg); font-family: 'Caveat', cursive; font-weight: 700; font-size: 20px; color: #1F1B16">{{ph.name}}</div>
+              <span style="font-size: 13px; color: #55534E; font-variant-numeric: tabular-nums">{{ph.hex}}</span>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+      <section style="display: flex; flex-direction: column; gap: 12px">
+        <h2 style="margin: 0; font-size: 13px; font-weight: 650; letter-spacing: 0.16em; text-transform: uppercase; color: #55534E">Surfaces</h2>
+        <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px">
+          <sc-for list="{{surfaces}}" as="s" hint-placeholder-count="6">
+            <div style="display: flex; align-items: center; gap: 10px">
+              <span style="width: 44px; height: 44px; border-radius: 4px; background-color: {{s.hex}}; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.12)"></span>
+              <span style="display: flex; flex-direction: column; font-size: 14px; font-weight: 600">{{s.name}}<span style="font-weight: 400; color: #55534E">{{s.hex}}</span></span>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+    </div>
+
+    <section style="display: flex; flex-direction: column; gap: 12px">
+      <h2 style="margin: 0; font-size: 13px; font-weight: 650; letter-spacing: 0.16em; text-transform: uppercase; color: #55534E">Type — pick a headline (Tweaks › headlineFont)</h2>
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px">
+        <div style="padding: 14px; background-color: #FBFAF6; display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Kaushan Script', cursive; font-size: 40px; line-height: 1.05">Design Thinking</span>
+          <span style="font-size: 13px; color: #55534E">brush · Kaushan Script (default)</span>
+        </div>
+        <div style="padding: 14px; background-color: #FBFAF6; display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Permanent Marker', cursive; font-size: 36px; line-height: 1.05">DESIGN THINKING</span>
+          <span style="font-size: 13px; color: #55534E">marker · Permanent Marker</span>
+        </div>
+        <div style="padding: 14px; background-color: #FBFAF6; display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Pinyon Script', cursive; font-size: 44px; line-height: 1.05">Design Thinking</span>
+          <span style="font-size: 13px; color: #55534E">script · Pinyon Script</span>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 8px">
+        <span style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 30px">How might we help first-years find their way?</span>
+        <span style="font-size: 13px; color: #55534E">Notes &amp; handwriting · Caveat 700</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 8px">
+        <span style="font-size: 34px; font-weight: 750; letter-spacing: -0.03em; line-height: 1">Ten groups. Ten problems worth solving.</span>
+        <span style="font-size: 16px; color: #3B3934">Interface, headings and body · Bricolage Grotesque 400–800, tabular numbers for counters.</span>
+      </div>
+    </section>
+  </div>
+
+  <section style="display: flex; flex-direction: column; gap: 10px">
+    <h2 style="margin: 0; font-size: 13px; font-weight: 650; letter-spacing: 0.16em; text-transform: uppercase; color: #55534E">Motion map — scroll progress 0 → 100%</h2>
+    <sc-for list="{{tracks}}" as="t" hint-placeholder-count="7">
+      <div style="display: flex; align-items: center; gap: 16px">
+        <span style="width: 200px; flex-shrink: 0; font-size: 14px; font-weight: 600">{{t.name}}</span>
+        <div style="position: relative; flex: 1; height: 18px; background-color: rgba(23,24,26,0.06); border-radius: 3px">
+          <div style="position: absolute; top: 0; height: 18px; left: {{t.from}}%; width: {{t.span}}%; background-color: {{t.color}}; border-radius: 3px; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.12)"></div>
+        </div>
+        <span style="width: 76px; flex-shrink: 0; font-size: 13px; color: #55534E; font-variant-numeric: tabular-nums; text-align: right">{{t.label}}</span>
+      </div>
+    </sc-for>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":760}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const T = (name, a, b, color) => ({ name, from: a, span: b - a, color, label: a + '–' + b + '%' });
+    return {
+      phases: [
+        { name: 'Empathize', hex: '#FFE45C', rot: -3 },
+        { name: 'Define', hex: '#FF8FB1', rot: 2 },
+        { name: 'Ideate', hex: '#7CC8FF', rot: -1.5 },
+        { name: 'Prototype', hex: '#8EE07A', rot: 3 },
+        { name: 'Test', hex: '#FFA552', rot: -2 },
+      ],
+      surfaces: [
+        { name: 'Wall', hex: '#ECEBE8' },
+        { name: 'Paper', hex: '#FBFAF6' },
+        { name: 'Cork', hex: '#C9A47E' },
+        { name: 'Kraft', hex: '#C99C6A' },
+        { name: 'Frame', hex: '#3A2E25' },
+        { name: 'Ink', hex: '#17181A' },
+      ],
+      tracks: [
+        T('Box shakes', 12, 30, '#C99C6A'),
+        T('Flaps open', 25, 34, '#C99C6A'),
+        T('Notes burst out', 30, 58, '#FFE45C'),
+        T('Board in · box drops', 56, 70, '#C9A47E'),
+        T('Notes stick', 64, 90, '#FF8FB1'),
+        T('Lettering draws', 76, 97, '#7CC8FF'),
+        T('Showcase cue', 94, 100, '#8EE07A'),
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

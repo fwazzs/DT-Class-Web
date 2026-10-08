@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Design Thinking Class C — First Semester, 2026</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&amp;family=Caveat:wght@500;700&amp;family=Kaushan+Script&amp;family=Permanent+Marker&amp;family=Pinyon+Script&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div style="position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; background-color: #ECEBE8; font-family: 'Bricolage Grotesque', system-ui, sans-serif; color: #17181A">
+  <div onScroll="{{onScroll}}" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain">
+    <main>
+      <section id="top" aria-label="Intro" style="position: relative; height: {{storyH}}px">
+        <div style="position: sticky; top: 0; height: {{H}}px">
+          <dc-import name="Story" width="{{W}}" height="{{H}}" progress="{{progress}}" live="{{live}}" headline-font="{{font}}" hint-size="{{hint}}"></dc-import>
+        </div>
+      </section>
+      <section id="showcase" aria-label="Showcase">
+        <dc-import name="Showcase" width="{{W}}" height="{{H}}" hint-size="{{hint}}"></dc-import>
+      </section>
+      <section id="lecturer" aria-label="Lecturer" style="position: relative; height: {{lecH}}px">
+        <div style="position: sticky; top: 0; height: {{H}}px">
+          <dc-import name="Lecturer" width="{{W}}" height="{{H}}" enter="{{lecIn}}" hint-size="{{hint}}"></dc-import>
+        </div>
+      </section>
+      <section id="students" aria-label="Students">
+        <dc-import name="Students" width="{{W}}" seen="{{stuSeen}}" hint-size="{{stuHint}}"></dc-import>
+      </section>
+      <section id="thanks" aria-label="Thank you">
+        <dc-import name="Thanks" width="{{W}}" seen="{{thxSeen}}" live="{{live}}" hint-size="{{thxHint}}"></dc-import>
+      </section>
+    </main>
+    <div style="position: relative; margin-top: -28px">
+      <dc-import name="Footer" width="{{W}}" hint-size="{{footHint}}"></dc-import>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"headlineFont":{"editor":"enum","options":["brush","marker","script"],"default":"brush"},"reducedMotion":{"editor":"boolean","default":false},"width":{"editor":null,"default":1440},"height":{"editor":null,"default":900},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  componentWillUnmount() {
+    if (this._raf) cancelAnimationFrame(this._raf);
+  }
+  // Measured from the DOM, so it stays right however tall the sections above end up.
+  seenOf(id, st, H) {
+    const el = this._scroller && this._scroller.querySelector('#' + id);
+    return el ? st + H - el.offsetTop : 0;
+  }
+  renderVals() {
+    const W = Number(this.props.width ?? 1440);
+    const H = Number(this.props.height ?? 900);
+    const mobile = W < 700;
+    const reduced = !!this.props.reducedMotion;
+    // Pin length: ~4 screens of scroll on desktop, a little less on phones.
+    const storyH = reduced ? H : Math.round(H * (mobile ? 3.6 : 4.2));
+    const st = (this.state && this.state.scrollTop) || 0;
+    const progress = reduced ? 1 : Math.min(1, Math.max(0, st / (storyH - H)));
+    // Lecturer page turns in while it scrolls up into view.
+    const lecH = H;
+    const lecTop = storyH + H - st;
+    const clamp = (v) => Math.min(1, Math.max(0, v));
+    const lecIn = reduced ? 1 : clamp((H - lecTop) / (H * 0.9));
+    return {
+      W, H, storyH, progress, live: !reduced, lecH, lecIn,
+      // Students / thanks: px of each section scrolled into view (drives their reveal).
+      stuSeen: reduced ? 100000 : this.seenOf('students', st, H),
+      thxSeen: reduced ? 100000 : this.seenOf('thanks', st, H),
+      thxHint: W + (mobile ? 'px,1000px' : 'px,1100px'),
+      stuHint: W + (mobile ? 'px,3200px' : 'px,2060px'),
+      font: this.props.headlineFont ?? 'brush',
+      hint: W + 'px,' + H + 'px',
+      footHint: W + (mobile ? 'px,760px' : 'px,470px'),
+      onScroll: (e) => {
+        this._st = e.currentTarget.scrollTop;
+        this._scroller = e.currentTarget;
+        if (!this._raf) {
+          this._raf = requestAnimationFrame(() => {
+            this._raf = null;
+            this.setState({ scrollTop: this._st });
+          });
+        }
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>

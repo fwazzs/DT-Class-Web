@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Group showcase slider</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&amp;family=Caveat:wght@500;700&amp;family=Kaushan+Script&amp;family=Permanent+Marker&amp;family=Pinyon+Script&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div style="position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; background-color: {{tint}}; transition: background-color 0.7s ease; font-family: 'Bricolage Grotesque', system-ui, sans-serif; color: #17181A">
+  <div aria-hidden="true" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-image: radial-gradient(rgba(23,24,26,0.12) 1px, transparent 1.4px); background-size: 22px 22px"></div>
+  <div aria-hidden="true" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-image: radial-gradient(60% 55% at 50% 48%, rgba(255,252,240,0.6), rgba(255,252,240,0) 70%), radial-gradient(130% 110% at 50% 45%, rgba(0,0,0,0) 55%, rgba(70,52,34,0.14) 100%)"></div>
+  <svg aria-hidden="true" width="100%" height="100%" style="position: absolute; left: 0; top: 0; opacity: 0.5; mix-blend-mode: multiply; pointer-events: none; will-change: transform">
+    <filter id="dt-grain-showcase"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"></feTurbulence><feColorMatrix type="saturate" values="0"></feColorMatrix><feComponentTransfer><feFuncA type="linear" slope="0.28"></feFuncA></feComponentTransfer></filter>
+    <rect width="100%" height="100%" filter="url(#dt-grain-showcase)"></rect>
+  </svg>
+
+  <div style="position: absolute; left: {{L.pad}}px; right: {{L.pad}}px; top: {{L.headTop}}px; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px">
+    <div>
+      <p style="margin: 0; font-size: 13px; font-weight: 650; letter-spacing: 0.16em; text-transform: uppercase; color: #3B3934">02 — The showcase</p>
+      <h2 style="margin: 10px 0 0; max-width: 12em; font-size: {{L.h2}}px; font-weight: 750; line-height: 1; letter-spacing: -0.03em">Ten groups. Ten problems worth solving.</h2>
+    </div>
+    <sc-if value="{{desktop}}" hint-placeholder-val="{{ true }}">
+      <p style="margin: 0 0 6px; display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: #3B3934">
+        Drag, swipe or use
+        <kbd style="display: inline-flex; align-items: center; justify-content: center; min-width: 26px; height: 26px; border: 1.5px solid #17181A; border-radius: 6px; font-family: inherit; font-size: 13px; font-weight: 650">←</kbd>
+        <kbd style="display: inline-flex; align-items: center; justify-content: center; min-width: 26px; height: 26px; border: 1.5px solid #17181A; border-radius: 6px; font-family: inherit; font-size: 13px; font-weight: 650">→</kbd>
+      </p>
+    </sc-if>
+  </div>
+
+  <div role="region" aria-roledescription="carousel" aria-label="Group projects" tabIndex="0" onKeyDown="{{onKey}}" onWheel="{{onWheel}}" onPointerDown="{{onDown}}" onPointerMove="{{onMove}}" onPointerUp="{{onUp}}" onPointerCancel="{{onUp}}" style="position: absolute; left: 0; right: 0; top: {{L.trackTop}}px; height: {{L.trackH}}px; touch-action: pan-y; user-select: none; cursor: {{cursor}}; outline-offset: -6px">
+    <sc-for list="{{cards}}" as="c" hint-placeholder-count="3">
+      <article aria-label="{{c.label}}" onClick="{{c.click}}" style="position: absolute; left: 50%; top: 20px; width: {{c.w}}px; height: {{c.h}}px; margin-left: {{c.ml}}px; box-sizing: border-box; padding: {{c.pad}}px; display: flex; flex-direction: column; background-color: #FBFAF6; border-radius: 3px; box-shadow: {{c.shadow}}; transform: {{c.tf}}; opacity: {{c.op}}; z-index: {{c.z}}; transition: {{c.tr}}">
+        <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 650; letter-spacing: 0.12em; text-transform: uppercase; color: #55534E">
+          <span>Issue {{c.num}}</span>
+          <span>Design Thinking</span>
+        </div>
+        <div style="position: relative; margin-top: 12px; height: {{c.coverH}}px; flex-shrink: 0; overflow: hidden; background-color: #DAD6CE; background-image: repeating-linear-gradient(135deg, rgba(23,24,26,0.06) 0 2px, transparent 2px 12px)">
+          <span style="position: absolute; left: 12px; top: 12px; padding: 4px 8px; background-color: rgba(251,250,246,0.92); font-size: 12px; font-weight: 500; color: #55534E">[Group cover photo]</span>
+          <span aria-hidden="true" style="position: absolute; left: 8px; bottom: {{c.numBottom}}px; font-size: {{c.numSize}}px; font-weight: 800; line-height: 1; letter-spacing: -0.06em; color: #17181A; transform: translateX({{c.par}}px); transition: {{c.tr}}">{{c.num}}</span>
+        </div>
+        <div style="margin-top: 16px; padding-right: {{c.textPad}}px; display: flex; flex-direction: column; gap: 6px; flex: 1">
+          <p style="margin: 0; display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 650; letter-spacing: 0.12em; text-transform: uppercase">
+            <span aria-hidden="true" style="width: 10px; height: 10px; background-color: {{c.color}}; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.18)"></span>
+            Group {{c.num}}
+          </p>
+          <h3 style="margin: 0; font-size: {{c.titleSize}}px; font-weight: 750; line-height: 1.05; letter-spacing: -0.02em">[Project title]</h3>
+          <p style="margin: 0; font-size: 14px; color: #55534E">[Member names]</p>
+        </div>
+        <a href="{{c.href}}" tabIndex="{{c.tab}}" draggable="false" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 15px; font-weight: 650; color: #17181A; text-underline-offset: 4px">
+          Open project
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"></path></svg>
+        </a>
+        <div style="position: absolute; right: {{c.noteRight}}px; top: {{c.noteTop}}px; width: {{c.noteS}}px; height: {{c.noteS}}px; box-sizing: border-box; padding: {{c.notePad}}px; background-color: {{c.color}}; background-image: linear-gradient(180deg, rgba(0,0,0,0.07), rgba(0,0,0,0) 22%); box-shadow: 0 2px 3px rgba(40,30,20,0.22), 0 10px 18px -6px rgba(40,30,20,0.25); transform: rotate({{c.noteRot}}deg); font-family: 'Caveat', cursive; font-weight: 700; font-size: {{c.noteFont}}px; line-height: 1.05; color: #1F1B16">
+          How might we [your group's HMW question]?
+          <div aria-hidden="true" style="position: absolute; left: 30%; top: -9px; width: 40%; height: 18px; background-color: rgba(240,234,218,0.82); box-shadow: 0 1px 1px rgba(0,0,0,0.08); transform: rotate(-3deg)"></div>
+        </div>
+      </article>
+    </sc-for>
+  </div>
+
+  <div style="position: absolute; left: {{L.pad}}px; right: {{L.pad}}px; bottom: {{L.ctrlBottom}}px; display: flex; align-items: center; justify-content: space-between; gap: 16px">
+    <p aria-live="polite" style="margin: 0; font-size: {{L.counter}}px; font-weight: 750; letter-spacing: -0.02em; font-variant-numeric: tabular-nums">{{cur}}<span style="font-weight: 500; color: #55534E"> / 10</span></p>
+    <sc-if value="{{desktop}}" hint-placeholder-val="{{ true }}">
+      <nav aria-label="Choose a group" style="display: flex; gap: 2px">
+        <sc-for list="{{dots}}" as="d" hint-placeholder-count="10">
+          <button type="button" aria-label="{{d.label}}" aria-current="{{d.current}}" onClick="{{d.go}}" style="width: 44px; height: 44px; padding: 0; border: 0; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center">
+            <span style="width: {{d.s}}px; height: {{d.s}}px; background-color: {{d.color}}; box-shadow: {{d.shadow}}; transform: rotate({{d.rot}}deg) translateY({{d.ty}}px); transition: all 0.3s ease"></span>
+          </button>
+        </sc-for>
+      </nav>
+    </sc-if>
+    <div style="display: flex; gap: 12px">
+      <button type="button" aria-label="Previous group" disabled="{{atStart}}" onClick="{{prev}}" style="width: {{L.btn}}px; height: {{L.btn}}px; padding: 0; border-radius: 50%; border: 1.5px solid #17181A; background-color: #FBFAF6; color: #17181A; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: {{prevOp}}">
+        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 8H3M7 4L3 8l4 4"></path></svg>
+      </button>
+      <button type="button" aria-label="Next group" disabled="{{atEnd}}" onClick="{{next}}" style="width: {{L.btn}}px; height: {{L.btn}}px; padding: 0; border-radius: 50%; border: 1.5px solid #17181A; background-color: #17181A; color: #FBFAF6; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: {{nextOp}}">
+        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"></path></svg>
+      </button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"width":{"editor":null,"default":1440},"height":{"editor":null,"default":900},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  componentWillUnmount() {
+    clearTimeout(this._t);
+  }
+  renderVals() {
+    const W = Number(this.props.width ?? 1440);
+    const H = Number(this.props.height ?? 900);
+    const mobile = W < 700;
+    const N = 10;
+    const COLORS = ['#FFE45C', '#FF8FB1', '#7CC8FF', '#8EE07A', '#FFA552'];
+    // Ambient wall tint follows the active group's note color.
+    const TINTS = ['#F5EEC6', '#F5DDE5', '#DCEAF5', '#DFEFD8', '#F6E2CE'];
+    const st = this.state || {};
+    const pos = st.pos ?? 0;
+    const dragging = !!st.dragging;
+    const clampI = (i) => Math.max(0, Math.min(N - 1, i));
+    const idx = clampI(Math.round(pos));
+    const CW = mobile ? 280 : 400;
+    const CH = mobile ? 420 : 540;
+    const step = mobile ? 296 : 440;
+    const pad2 = (n) => String(n).padStart(2, '0');
+    const go = (i) => this.setState({ pos: clampI(i) });
+    const tr = dragging ? 'none' : 'transform 0.65s cubic-bezier(0.22, 0.8, 0.24, 1), opacity 0.5s ease, box-shadow 0.5s ease';
+
+    const cards = [];
+    for (let i = 0; i < N; i++) {
+      const d = i - pos;
+      const ad = Math.abs(d);
+      const sc = 1 - Math.min(ad, 2) * 0.08;
+      const rot = Math.max(-2, Math.min(2, d)) * 3 + (i % 2 ? 1.2 : -1.2) * Math.min(ad, 1);
+      cards.push({
+        num: pad2(i + 1), label: 'Group ' + (i + 1) + ' of ' + N, href: '#group-' + pad2(i + 1),
+        w: CW, h: CH, ml: -CW / 2, pad: mobile ? 14 : 18,
+        tf: 'translateX(' + d * step + 'px) rotate(' + rot + 'deg) scale(' + sc + ')',
+        op: ad > 3.2 ? 0 : 1 - Math.min(ad, 2) * 0.25,
+        z: 100 - Math.round(ad * 10), tr,
+        shadow: ad < 0.5
+          ? '0 2px 4px rgba(40,30,20,0.12), 0 30px 50px -20px rgba(40,30,20,0.45)'
+          : '0 1px 3px rgba(40,30,20,0.12), 0 12px 24px -14px rgba(40,30,20,0.3)',
+        par: -d * 40, coverH: mobile ? 190 : 262,
+        numSize: mobile ? 150 : 220, numBottom: mobile ? -24 : -36,
+        color: COLORS[i % 5], titleSize: mobile ? 22 : 30, textPad: mobile ? 92 : 130,
+        noteRight: mobile ? -12 : -22, noteTop: mobile ? 180 : 236, noteS: mobile ? 108 : 150,
+        notePad: mobile ? 10 : 14, noteFont: mobile ? 16 : 21, noteRot: i % 2 ? 5 : -4,
+        tab: i === idx ? 0 : -1,
+        click: (e) => {
+          if (this._dragged) { e.preventDefault(); return; }
+          if (i !== idx) { e.preventDefault(); go(i); }
+        },
+      });
+    }
+
+    const dots = [];
+    for (let i = 0; i < N; i++) {
+      const on = i === idx;
+      dots.push({
+        label: 'Go to group ' + (i + 1), current: on, color: COLORS[i % 5],
+        s: on ? 26 : 18, rot: on ? 0 : (i % 2 ? 6 : -5), ty: on ? -3 : 0,
+        shadow: on ? '0 6px 10px -2px rgba(40,30,20,0.35)' : '0 1px 2px rgba(40,30,20,0.25)',
+        go: () => go(i),
+      });
+    }
+
+    return {
+      W, H, cards, dots, desktop: !mobile,
+      tint: TINTS[idx % 5], cursor: dragging ? 'grabbing' : 'grab',
+      cur: pad2(idx + 1), atStart: idx === 0, atEnd: idx === N - 1,
+      prevOp: idx === 0 ? 0.35 : 1, nextOp: idx === N - 1 ? 0.35 : 1,
+      prev: () => go(idx - 1), next: () => go(idx + 1),
+      L: mobile
+        ? { pad: 20, headTop: 36, h2: 34, trackTop: 186, trackH: 470, ctrlBottom: 28, counter: 28, btn: 48 }
+        : { pad: 64, headTop: 64, h2: 54, trackTop: 214, trackH: 600, ctrlBottom: 36, counter: 34, btn: 52 },
+      onKey: (e) => {
+        const map = { ArrowRight: idx + 1, ArrowLeft: idx - 1, Home: 0, End: N - 1 };
+        if (e.key in map) { e.preventDefault(); go(map[e.key]); }
+      },
+      onWheel: (e) => {
+        // Horizontal trackpad swipes (or shift+wheel) only, so vertical page scroll still works.
+        const dx = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : (e.shiftKey ? e.deltaY : 0);
+        if (!dx) return;
+        this._acc = (this._acc || 0) + dx;
+        const now = Date.now();
+        if (Math.abs(this._acc) > 50 && now - (this._lastWheel || 0) > 380) {
+          go(idx + Math.sign(this._acc));
+          this._acc = 0;
+          this._lastWheel = now;
+        }
+      },
+      onDown: (e) => {
+        if (e.button) return;
+        this._drag = { x: e.clientX, pos, lastX: e.clientX, lastT: performance.now(), v: 0, moved: false, id: e.pointerId, el: e.currentTarget };
+      },
+      onMove: (e) => {
+        const d = this._drag;
+        if (!d) return;
+        const dx = e.clientX - d.x;
+        if (!d.moved) {
+          if (Math.abs(dx) < 6) return;
+          // Capture only once it is a real drag, so plain clicks still reach links and cards.
+          d.moved = true;
+          try { d.el.setPointerCapture(d.id); } catch (err) {}
+          this.setState({ dragging: true });
+        }
+        const now = performance.now();
+        d.v = (e.clientX - d.lastX) / Math.max(1, now - d.lastT);
+        d.lastX = e.clientX;
+        d.lastT = now;
+        let np = d.pos - dx / step;
+        if (np < 0) np *= 0.35;
+        if (np > N - 1) np = N - 1 + (np - (N - 1)) * 0.35;
+        this.setState({ pos: np });
+      },
+      onUp: () => {
+        const d = this._drag;
+        this._drag = null;
+        if (!d || !d.moved) return;
+        this._dragged = true;
+        clearTimeout(this._t);
+        this._t = setTimeout(() => { this._dragged = false; }, 0);
+        // Momentum: project ~180ms of release velocity, then snap.
+        const cur = (this.state && this.state.pos) ?? pos;
+        this.setState({ dragging: false, pos: clampI(Math.round(cur - (d.v * 180) / step)) });
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>

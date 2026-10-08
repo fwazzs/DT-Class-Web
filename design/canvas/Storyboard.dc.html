@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Scroll story storyboard</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&amp;family=Caveat:wght@500;700&amp;family=Kaushan+Script&amp;family=Permanent+Marker&amp;family=Pinyon+Script&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div style="width: 2280px; height: 640px; box-sizing: border-box; padding: 56px; background-color: #ECEBE8; font-family: 'Bricolage Grotesque', system-ui, sans-serif; color: #17181A; display: flex; flex-direction: column; gap: 32px">
+  <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 24px">
+    <h1 style="margin: 0; font-size: 32px; font-weight: 750; letter-spacing: -0.02em">Scroll story — four beats, scrubbed by scroll</h1>
+    <p style="margin: 0; font-size: 16px; color: #55534E">Pinned for ~4.2 screens on desktop, ~3.6 on phones. Reduced motion shows beat 04 only.</p>
+  </div>
+  <div style="display: flex; align-items: flex-start; gap: 20px">
+    <sc-for list="{{frames}}" as="f" hint-placeholder-count="4">
+      <div style="display: flex; align-items: flex-start; gap: 20px">
+        <sc-if value="{{f.arrow}}" hint-placeholder-val="{{ false }}">
+          <svg aria-hidden="true" width="24" height="306" viewBox="0 0 24 306" fill="none" stroke="#55534E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 153h20M15 146l7 7-7 7"></path></svg>
+        </sc-if>
+        <figure style="margin: 0; width: 490px; display: flex; flex-direction: column; gap: 14px">
+          <div style="width: 490px; height: 306px; overflow: hidden; border-radius: 8px; box-shadow: 0 1px 2px rgba(40,30,20,0.15), 0 12px 28px -12px rgba(40,30,20,0.35)">
+            <div style="width: 1440px; height: 900px; transform: scale(0.34); transform-origin: 0 0">
+              <dc-import name="Story" width="{{f.w}}" height="{{f.h}}" progress="{{f.p}}" live="{{f.live}}" headline-font="brush" hint-size="1440px,900px"></dc-import>
+            </div>
+          </div>
+          <figcaption style="display: flex; flex-direction: column; gap: 4px">
+            <span style="font-size: 13px; font-weight: 650; letter-spacing: 0.14em; text-transform: uppercase; color: #55534E">{{f.n}} · {{f.range}}</span>
+            <span style="font-family: 'Caveat', cursive; font-weight: 700; font-size: 26px; line-height: 1.1">{{f.cap}}</span>
+          </figcaption>
+        </figure>
+      </div>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":2280,"height":640}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const base = { w: 1440, h: 900, live: false };
+    return {
+      frames: [
+        { ...base, p: 0.04, arrow: false, n: '01', range: 'Scroll 0–12%', cap: '“Box closed”' },
+        { ...base, p: 0.36, arrow: true, n: '02', range: 'Scroll 12–34%', cap: '“Box shakes, then opens — sticky notes blow out”' },
+        { ...base, p: 0.56, arrow: true, n: '03', range: 'Scroll 30–62%', cap: '“Sticky notes fly all over the page”' },
+        { ...base, p: 1, arrow: true, n: '04', range: 'Scroll 56–100%', cap: '“Notes stick to the wall magazine, Design Thinking lettering in the middle”' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,26 +1,81 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Design tokens — mirror DESIGN.md and the canvas style tile. Light only: the whole site is paper on a wall. */
+@theme {
+  --color-wall: #e9e6df;
+  --color-paper: #fbfaf6;
+  --color-liner: #fffefa;
+  --color-cork: #c9a47e;
+  --color-kraft: #c99c6a;
+  --color-frame: #3a2e25;
+  --color-ink: #17181a;
+  --color-ink-soft: #3b3934;
+  --color-muted: #55534e;
+  --color-footer-muted: #8e8b84;
+
+  /* One sticky-note color per Design Thinking phase */
+  --color-note-empathize: #ffe45c;
+  --color-note-define: #ff8fb1;
+  --color-note-ideate: #7cc8ff;
+  --color-note-prototype: #8ee07a;
+  --color-note-test: #ffa552;
+
+  /* Pale wall tints for the showcase ambient background */
+  --color-tint-empathize: #f5eec6;
+  --color-tint-define: #f5dde5;
+  --color-tint-ideate: #dceaf5;
+  --color-tint-prototype: #dfefd8;
+  --color-tint-test: #f6e2ce;
+
+  --font-sans: var(--font-bricolage), system-ui, sans-serif;
+  --font-hand: var(--font-caveat), cursive;
+  --font-brush: var(--font-kaushan), cursive;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Dotted studio wall */
+@utility bg-wall-dots {
+  background-image: radial-gradient(rgba(23, 24, 26, 0.14) 1px, transparent 1.4px);
+  background-size: 22px 22px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Cork board texture */
+@utility bg-cork-texture {
+  background-image:
+    radial-gradient(rgba(110, 74, 40, 0.55) 0.9px, transparent 1.3px),
+    radial-gradient(rgba(236, 206, 166, 0.75) 0.8px, transparent 1.2px);
+  background-size: 7px 7px, 11px 11px;
+  background-position: 0 0, 3px 5px;
+}
+
+/* Sticky-note paper: adhesive strip shading at the top + soft sheen */
+@utility note-paper {
+  background-image:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.09), rgba(0, 0, 0, 0) 22%),
+    linear-gradient(160deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0) 45%);
+}
+
+/* Washi / masking tape strip */
+@utility tape {
+  background-image: linear-gradient(90deg, rgba(232, 224, 200, 0.8), rgba(250, 246, 232, 0.9) 45%, rgba(232, 224, 200, 0.8));
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+/* Image placeholder hatch */
+@utility bg-hatch {
+  background-image: repeating-linear-gradient(135deg, rgba(23, 24, 26, 0.05) 0 2px, transparent 2px 12px);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-wall);
+  color: var(--color-ink);
 }

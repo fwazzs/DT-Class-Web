@@ -1,0 +1,530 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Scroll story stage</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&amp;family=Caveat:wght@500;700&amp;family=Kaushan+Script&amp;family=Permanent+Marker&amp;family=Pinyon+Script&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div style="position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; background-color: #E9E6DF; background-image: radial-gradient(rgba(23,24,26,0.14) 1px, transparent 1.4px); background-size: 22px 22px; font-family: 'Bricolage Grotesque', system-ui, sans-serif; color: #17181A">
+
+  <!-- Camera: everything in the scene moves together (push in, pull back, slight handheld drift) -->
+  <div style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; transform-origin: {{cam.o}}; transform: {{cam.tf}}">
+
+  <!-- Studio light: warm window light top-left, soft falloff to the corners -->
+  <div aria-hidden="true" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-image: radial-gradient(70% 60% at 22% 12%, rgba(255,248,228,0.75), rgba(255,248,228,0) 70%), radial-gradient(130% 110% at 50% 45%, rgba(0,0,0,0) 55%, rgba(70,52,34,0.16) 100%)"></div>
+
+  <!-- Paper grain -->
+  <svg aria-hidden="true" width="100%" height="100%" style="position: absolute; left: 0; top: 0; opacity: 0.55; mix-blend-mode: multiply; pointer-events: none; will-change: transform">
+    <filter id="dt-grain"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"></feTurbulence><feColorMatrix type="saturate" values="0"></feColorMatrix><feComponentTransfer><feFuncA type="linear" slope="0.28"></feFuncA></feComponentTransfer></filter>
+    <rect width="100%" height="100%" filter="url(#dt-grain)"></rect>
+  </svg>
+
+  <!-- Wall doodles + desk bits (drift up slowly with scroll) -->
+  <div aria-hidden="true" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; transform: translateY({{wall.ty}}px); color: #5E5A53; font-family: 'Caveat', cursive; font-weight: 700">
+    <sc-if value="{{wall.full}}" hint-placeholder-val="{{ true }}">
+      <!-- Double diamond -->
+      <div style="position: absolute; left: 5%; top: 15%; opacity: 0.62; transform: rotate(-4deg)">
+        <svg width="230" height="128" viewBox="0 0 230 128" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 54 C28 34 40 22 58 10 C74 26 88 38 110 54 C88 72 74 82 58 98 C40 82 26 70 6 54Z"></path><path d="M118 54 C140 34 152 22 170 10 C186 26 200 40 222 54 C200 72 186 82 170 98 C152 82 138 70 118 54Z"></path><path d="M58 10 V98 M170 10 V98" stroke-dasharray="3 5"></path><text x="115" y="122" fill="currentColor" stroke="none" style="font-size: 17px; text-anchor: middle">discover · define · develop · deliver</text></svg>
+      </div>
+      <!-- Lightbulb -->
+      <div style="position: absolute; left: 25%; top: 25%; opacity: 0.6; transform: rotate(8deg)">
+        <svg width="74" height="96" viewBox="-12 -12 84 104" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M30 6 C14 6 6 18 6 30 C6 42 16 48 18 58 H42 C44 48 54 42 54 30 C54 18 46 6 30 6Z"></path><path d="M20 65 H40 M22 72 H38 M26 79 H34"></path><path d="M-6 10 L1 15 M66 10 L59 15 M30 -9 V-2 M-9 34 H-2 M62 34 H69"></path></svg>
+      </div>
+      <!-- User + speech bubble -->
+      <div style="position: absolute; left: 6%; top: 57%; opacity: 0.62; transform: rotate(-3deg)">
+        <svg width="150" height="90" viewBox="0 0 150 90" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="20" cy="22" r="9"></circle><path d="M20 31 V62 M20 40 L7 52 M20 40 L33 52 M20 62 L9 84 M20 62 L31 84"></path><path d="M54 6 H134 C142 6 146 10 146 18 V38 C146 46 142 50 134 50 H76 L62 63 L65 50 H54 C46 50 42 46 42 38 V18 C42 10 46 6 54 6Z"></path><text x="94" y="34" fill="currentColor" stroke="none" style="font-size: 19px; text-anchor: middle">what if…?</text></svg>
+      </div>
+      <!-- Curly arrow pointing at the box -->
+      <div style="position: absolute; left: 29%; top: 63%; opacity: 0.6">
+        <svg width="120" height="70" viewBox="0 0 120 70" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 48 C26 8 66 6 76 32 C84 54 58 62 52 46 C46 32 72 22 108 30"></path><path d="M98 22 L108 30 L97 37"></path><text x="2" y="68" fill="currentColor" stroke="none" style="font-size: 17px">open me</text></svg>
+      </div>
+      <!-- HMW circled -->
+      <div style="position: absolute; left: 81%; top: 19%; opacity: 0.62; transform: rotate(5deg)">
+        <svg width="130" height="70" viewBox="0 0 130 70" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M14 36 C10 12 116 6 120 32 C124 58 18 64 10 40 C6 28 32 14 70 14"></path><text x="64" y="44" fill="currentColor" stroke="none" style="font-size: 30px; text-anchor: middle">HMW?</text></svg>
+      </div>
+      <!-- Sparkles -->
+      <div style="position: absolute; left: 70%; top: 31%; opacity: 0.55">
+        <svg width="70" height="50" viewBox="0 0 70 50" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M14 4 L17 16 L28 19 L17 22 L14 34 L11 22 L0 19 L11 16Z"></path><path d="M52 20 L54 28 L62 30 L54 32 L52 40 L50 32 L42 30 L50 28Z"></path></svg>
+      </div>
+      <div style="position: absolute; left: 91%; top: 63%; opacity: 0.5">
+        <svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M15 2 L18 12 L28 15 L18 18 L15 28 L12 18 L2 15 L12 12Z"></path></svg>
+      </div>
+      <!-- Squiggle -->
+      <div style="position: absolute; left: 68%; top: 82%; opacity: 0.5">
+        <svg width="140" height="40" viewBox="0 0 140 40" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 20 C14 2 24 38 34 20 S54 2 64 20 S84 38 94 20 S114 2 124 20"></path></svg>
+      </div>
+      <!-- Paper clip -->
+      <div style="position: absolute; left: 19%; top: 82%; transform: rotate(-28deg); filter: drop-shadow(0 2px 2px rgba(40,30,20,0.25))">
+        <svg width="30" height="64" viewBox="0 0 30 64" fill="none" stroke="#8E9196" stroke-width="2.6" stroke-linecap="round"><path d="M12 54 V14 C12 4 26 4 26 14 V50 C26 62 6 62 6 50 V20"></path></svg>
+      </div>
+      <!-- Loose washi tape strips -->
+      <div style="position: absolute; left: 59%; top: 12%; width: 96px; height: 24px; background-color: rgba(255,143,177,0.55); background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.45) 0 6px, rgba(255,255,255,0) 6px 14px); transform: rotate(8deg); box-shadow: 0 1px 2px rgba(0,0,0,0.08)"></div>
+      <div style="position: absolute; left: 12%; top: 40%; width: 80px; height: 22px; background-color: rgba(124,200,255,0.5); transform: rotate(-12deg); box-shadow: 0 1px 2px rgba(0,0,0,0.08)"></div>
+      <!-- Push pins -->
+      <div style="position: absolute; left: 46%; top: 17%; width: 16px; height: 16px; border-radius: 50%; background-color: #D2493A; background-image: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.7) 0 2px, rgba(255,255,255,0) 3px); box-shadow: 3px 4px 4px rgba(40,30,20,0.3)"></div>
+      <div style="position: absolute; left: 88%; top: 86%; width: 16px; height: 16px; border-radius: 50%; background-color: #2F6FDB; background-image: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.7) 0 2px, rgba(255,255,255,0) 3px); box-shadow: 3px 4px 4px rgba(40,30,20,0.3)"></div>
+    </sc-if>
+    <sc-if value="{{wall.compact}}" hint-placeholder-val="{{ false }}">
+      <div style="position: absolute; left: 4%; top: 12%; opacity: 0.6; transform: rotate(-4deg) scale(0.7); transform-origin: 0 0">
+        <svg width="230" height="128" viewBox="0 0 230 128" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 54 C28 34 40 22 58 10 C74 26 88 38 110 54 C88 72 74 82 58 98 C40 82 26 70 6 54Z"></path><path d="M118 54 C140 34 152 22 170 10 C186 26 200 40 222 54 C200 72 186 82 170 98 C152 82 138 70 118 54Z"></path><text x="115" y="122" fill="currentColor" stroke="none" style="font-size: 17px; text-anchor: middle">discover · define · develop · deliver</text></svg>
+      </div>
+      <div style="position: absolute; left: 76%; top: 15%; opacity: 0.6; transform: rotate(8deg) scale(0.75)">
+        <svg width="74" height="96" viewBox="-12 -12 84 104" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M30 6 C14 6 6 18 6 30 C6 42 16 48 18 58 H42 C44 48 54 42 54 30 C54 18 46 6 30 6Z"></path><path d="M20 65 H40 M22 72 H38 M26 79 H34"></path><path d="M-6 10 L1 15 M66 10 L59 15 M30 -9 V-2"></path></svg>
+      </div>
+      <div style="position: absolute; left: 5%; top: 74%; opacity: 0.62; transform: rotate(4deg) scale(0.8); transform-origin: 0 0">
+        <svg width="130" height="70" viewBox="0 0 130 70" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M14 36 C10 12 116 6 120 32 C124 58 18 64 10 40 C6 28 32 14 70 14"></path><text x="64" y="44" fill="currentColor" stroke="none" style="font-size: 30px; text-anchor: middle">HMW?</text></svg>
+      </div>
+      <div style="position: absolute; left: 48%; top: 83%; transform: rotate(-12deg) scale(0.62); transform-origin: 0 0; filter: drop-shadow(0 6px 5px rgba(40,30,20,0.25))">
+        <svg width="230" height="22" viewBox="0 0 230 22"><path d="M0 11 L26 2 L26 20Z" fill="#E7CDA2"></path><path d="M0 11 L9 8 L9 14Z" fill="#3A3836"></path><rect x="26" y="2" width="160" height="18" fill="#EDBB3C"></rect><rect x="26" y="8" width="160" height="6" fill="#F6CF5E"></rect><rect x="186" y="2" width="20" height="18" fill="#B7B2A8"></rect><rect x="206" y="2" width="22" height="18" rx="4" fill="#E58C86"></rect></svg>
+      </div>
+      <div style="position: absolute; left: 82%; top: 64%; opacity: 0.55">
+        <svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M15 2 L18 12 L28 15 L18 18 L15 28 L12 18 L2 15 L12 12Z"></path></svg>
+      </div>
+    </sc-if>
+  </div>
+
+  <!-- Wall magazine board (cork in a dark wood frame) -->
+  <div aria-hidden="true" style="position: absolute; left: {{board.x}}px; top: {{board.y}}px; width: {{board.w}}px; height: {{board.h}}px; box-sizing: border-box; border: {{board.frame}}px solid #3A2E25; border-radius: 6px; background-color: #C9A47E; background-image: radial-gradient(70% 70% at 30% 20%, rgba(255,240,215,0.28), rgba(255,240,215,0) 70%), radial-gradient(rgba(110,74,40,0.55) 0.9px, transparent 1.3px), radial-gradient(rgba(236,206,166,0.75) 0.8px, transparent 1.2px); background-size: 100% 100%, 7px 7px, 11px 11px; background-position: 0 0, 0 0, 3px 5px; box-shadow: inset 0 3px 12px rgba(0,0,0,0.38), 0 30px 60px -24px rgba(40,30,20,0.45); opacity: {{board.op}}; transform: scale({{board.sc}}); z-index: 1"></div>
+
+  <!-- Poster sheet with the lettering -->
+  <div style="position: absolute; left: {{poster.x}}px; top: {{poster.y}}px; width: {{poster.w}}px; height: {{poster.h}}px; box-sizing: border-box; padding: {{poster.pad}}px; background-color: #FBFAF6; box-shadow: 0 1px 2px rgba(40,30,20,0.2), 0 14px 30px -10px rgba(40,30,20,0.35); transform: rotate(-1.2deg) scale({{board.sc}}); opacity: {{board.op}}; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: {{poster.gap}}px; text-align: center">
+    <div aria-hidden="true" style="position: absolute; top: -12px; left: 16%; width: {{poster.tape}}px; height: 26px; background-color: rgba(238,232,214,0.85); transform: rotate(-5deg); box-shadow: 0 1px 1px rgba(0,0,0,0.08)"></div>
+    <div aria-hidden="true" style="position: absolute; top: -10px; right: 14%; width: {{poster.tape}}px; height: 26px; background-color: rgba(238,232,214,0.85); transform: rotate(4deg); box-shadow: 0 1px 1px rgba(0,0,0,0.08)"></div>
+    <p style="margin: 0; font-size: {{poster.kicker}}px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #55534E">Design Thinking Class C · First Semester, 2026</p>
+    
+    <h1 aria-label="Design Thinking" style="margin: 0; width: 100%; display: flex; flex-direction: column; align-items: center; text-align: center; font-family: {{title.family}}; font-size: {{title.size}}px; font-weight: 400; line-height: {{title.lh}}; color: #17181A">
+      <span aria-hidden="true" style="position: relative; display: block; padding: 0 0.12em">
+        <span style="display: block; clip-path: inset(-30% {{title.c1}}% -30% -8%)">{{title.l1}}</span>
+        <span style="position: absolute; left: {{title.p1}}%; bottom: 22%; width: 0.14em; height: 1.15em; border-radius: 0.03em 0.03em 0.05em 0.05em; background-color: #17181A; background-image: linear-gradient(180deg, #FFE45C 0 22%, transparent 22%); box-shadow: 0.08em 0.1em 0.12em rgba(40,30,20,0.3); transform-origin: 50% 100%; transform: translateX(-50%) rotate({{title.r1}}deg); opacity: {{title.o1}}"></span>
+      </span>
+      <span aria-hidden="true" style="position: relative; display: block; padding: 0 0.12em">
+        <span style="display: block; clip-path: inset(-30% {{title.c2}}% -30% -8%)">{{title.l2}}</span>
+        <span style="position: absolute; left: {{title.p2}}%; bottom: 22%; width: 0.14em; height: 1.15em; border-radius: 0.03em 0.03em 0.05em 0.05em; background-color: #17181A; background-image: linear-gradient(180deg, #FFE45C 0 22%, transparent 22%); box-shadow: 0.08em 0.1em 0.12em rgba(40,30,20,0.3); transform-origin: 50% 100%; transform: translateX(-50%) rotate({{title.r2}}deg); opacity: {{title.o2}}"></span>
+      </span>
+    </h1><p style="margin: 0; font-size: {{poster.tag}}px; font-weight: 500; line-height: 1.3; color: #3B3934; opacity: {{poster.tagOp}}">Ten groups. Five phases. One wall of ideas.</p>
+    <p style="margin: 0; display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: #55534E; opacity: {{poster.cueOp}}">
+      Scroll for the showcase
+      <svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2v10M3 8l4 4 4-4"></path></svg>
+    </p>
+  </div>
+
+  <!-- Warm light spilling out of the box as it opens -->
+  <div aria-hidden="true" style="position: absolute; left: {{glow.x}}px; top: {{glow.y}}px; width: {{glow.s}}px; height: {{glow.s}}px; margin: -{{glow.half}}px 0 0 -{{glow.half}}px; border-radius: 50%; background: radial-gradient(closest-side, rgba(255,247,222,0.95), rgba(255,236,190,0.45) 45%, rgba(255,236,190,0)); opacity: {{glow.op}}; z-index: 2"></div>
+
+  <!-- Dust kicked up each time the box lands while shaking -->
+  <div aria-hidden="true" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 3; pointer-events: none">
+    <sc-for list="{{dust}}" as="d" hint-placeholder-count="0">
+      <div style="position: absolute; left: {{d.x}}px; top: {{d.y}}px; width: {{d.s}}px; height: {{d.s}}px; margin: -{{d.half}}px 0 0 -{{d.half}}px; border-radius: 50%; background: radial-gradient(closest-side, rgba(150,128,100,0.55), rgba(150,128,100,0)); opacity: {{d.op}}"></div>
+    </sc-for>
+  </div>
+
+  <!-- Cardboard box (CSS 3D): textured kraft, lit from the top-left, four two-sided flaps -->
+  <div aria-hidden="true" style="position: absolute; left: {{box.x}}px; top: {{box.y}}px; width: {{box.s}}px; height: {{box.s}}px; perspective: 1100px; transform-origin: {{box.ox}} 100%; transform: translateY({{box.ty}}px) rotate({{box.rz}}deg); opacity: {{box.op}}; z-index: 3">
+    <!-- contact shadow (tight) + ambient shadow (soft) -->
+    <div style="position: absolute; left: -16%; width: 132%; top: 80%; height: 34%; border-radius: 50%; background: radial-gradient(closest-side, rgba(40,30,20,0.28), rgba(40,30,20,0)); opacity: {{box.shadowOp}}; transform: translateY({{box.shadowY}}px) scale({{box.shadowSc}})"></div>
+    <div style="position: absolute; left: 4%; width: 92%; top: 92%; height: 12%; border-radius: 50%; background: radial-gradient(closest-side, rgba(30,20,10,0.5), rgba(30,20,10,0)); opacity: {{box.contactOp}}"></div>
+    <div style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; transform-style: preserve-3d; transform: rotateX(-22deg) rotateY(-34deg)">
+      <!-- interior (seen once open): darker toward the bottom -->
+      <div style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: #8A6240; background-image: linear-gradient(180deg, rgba(255,235,200,0.08), rgba(25,12,0,0.55)); transform: rotateY(180deg) translateZ({{box.h}}px)"></div>
+      <div style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: #7D5838; background-image: linear-gradient(180deg, rgba(255,235,200,0.05), rgba(25,12,0,0.6)); transform: rotateY(-90deg) translateZ({{box.h}}px)"></div>
+      <div style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: #5E4128; background-image: radial-gradient(closest-side, rgba(0,0,0,0), rgba(0,0,0,0.35)); transform: rotateX(-90deg) translateZ({{box.h}}px)"></div>
+      <!-- right side: in shade -->
+      <div style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: #A97C4D; background-image: linear-gradient(90deg, rgba(0,0,0,0), rgba(40,20,5,0.28)), repeating-linear-gradient(90deg, rgba(70,45,20,0.07) 0 1px, transparent 1px 6px); box-shadow: inset 0 0 0 1px rgba(80,50,25,0.4), inset 0 2px 0 rgba(255,235,200,0.25); transform: rotateY(90deg) translateZ({{box.h}}px)">
+        <div style="position: absolute; left: 0; right: 0; top: 0; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6%; color: rgba(55,34,15,0.62); font-weight: 700; font-size: {{box.stampFont}}px; letter-spacing: 0.12em">
+          <svg width="30%" viewBox="0 0 40 20" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M10 18V4M4 10l6-6 6 6M30 18V4M24 10l6-6 6 6"></path></svg>
+          <span>THIS SIDE UP</span>
+        </div>
+      </div>
+      <!-- front: in the light -->
+      <div style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: #C99C6A; background-image: linear-gradient(160deg, rgba(255,240,215,0.28), rgba(255,240,215,0) 45%, rgba(60,35,10,0.2)), repeating-linear-gradient(90deg, rgba(90,60,30,0.06) 0 1px, transparent 1px 6px); box-shadow: inset 0 0 0 1px rgba(90,60,30,0.35), inset 0 2px 0 rgba(255,240,215,0.45), inset 0 -14px 20px -12px rgba(60,35,10,0.4); transform: translateZ({{box.h}}px)">
+        <div style="position: absolute; left: 10%; top: 16%; width: 48%; height: 30%; box-sizing: border-box; padding: 5% 6%; background-color: #F4EFE4; background-image: linear-gradient(170deg, rgba(255,255,255,0.4), rgba(0,0,0,0.04)); box-shadow: 0 1px 1px rgba(0,0,0,0.18); transform: rotate(-1.5deg); font-family: 'Caveat', cursive; font-weight: 700; font-size: {{box.labelFont}}px; line-height: 1.1; color: #2A2622">To: Class C<br>From: 10 groups</div>
+        <div style="position: absolute; right: 9%; bottom: 12%; padding: 3% 5%; border: 2px solid rgba(166,61,47,0.85); color: rgba(166,61,47,0.85); font-weight: 750; font-size: {{box.stampFont}}px; letter-spacing: 0.08em; line-height: 1.15; text-transform: uppercase; text-align: center; transform: rotate(-8deg); mix-blend-mode: multiply">Handle with<br>curiosity</div>
+        <!-- packing tape running down from the lid seam -->
+        <div style="position: absolute; left: 41%; top: 0; width: 18%; height: 24%; background-image: linear-gradient(90deg, rgba(222,200,150,0.8), rgba(250,240,215,0.92) 35%, rgba(222,200,150,0.8)); box-shadow: 0 1px 1px rgba(60,35,10,0.18)"></div>
+      </div>
+      <!-- inner flaps (front/back), under the long flaps -->
+      <div style="position: absolute; left: 0; top: 0; width: {{box.s}}px; height: 0; transform-style: preserve-3d; transform: translateZ({{box.h}}px) rotateX({{box.flapF}}deg)">
+        <div style="position: absolute; left: 0; top: 1px; width: 100%; height: {{box.h}}px; transform-origin: 50% 0; transform-style: preserve-3d; transform: rotateX(-90deg)">
+          <div style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; background-color: #DCC196; background-image: repeating-linear-gradient(0deg, rgba(90,60,30,0.05) 0 1px, transparent 1px 6px); box-shadow: inset 0 0 0 1px rgba(90,60,30,0.3)"></div>
+          <div style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; transform: rotateY(180deg); background-color: #C39566; background-image: linear-gradient(180deg, rgba(255,240,215,0.25), rgba(60,35,10,0.15)); box-shadow: inset 0 0 0 1px rgba(90,60,30,0.35)"></div>
+        </div>
+      </div>
+      <div style="position: absolute; left: 0; top: 0; width: {{box.s}}px; height: 0; transform-style: preserve-3d; transform: translateZ(-{{box.h}}px) rotateX({{box.flapB}}deg)">
+        <div style="position: absolute; left: 0; top: 1px; width: 100%; height: {{box.h}}px; transform-origin: 50% 0; transform-style: preserve-3d; transform: rotateX(90deg)">
+          <div style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; background-color: #DCC196; box-shadow: inset 0 0 0 1px rgba(90,60,30,0.3)"></div>
+          <div style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; transform: rotateY(180deg); background-color: #C39566; background-image: linear-gradient(180deg, rgba(255,240,215,0.25), rgba(60,35,10,0.15)); box-shadow: inset 0 0 0 1px rgba(90,60,30,0.35)"></div>
+        </div>
+      </div>
+      <!-- long flaps (left/right): kraft outside with tape, pale liner inside -->
+      <div style="position: absolute; left: 0; top: 0; width: 0; height: 0; transform-style: preserve-3d; transform: rotateZ({{box.flapL}}deg)">
+        <div style="position: absolute; left: 0; top: -{{box.h}}px; width: {{box.h}}px; height: {{box.s}}px; transform-style: preserve-3d; transform: rotateX(90deg)">
+          <div style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; background-color: #D6AB78; background-image: linear-gradient(135deg, rgba(255,245,225,0.3), rgba(60,35,10,0.12)), repeating-linear-gradient(0deg, rgba(90,60,30,0.05) 0 1px, transparent 1px 6px); box-shadow: inset 0 0 0 1px rgba(90,60,30,0.32)">
+            <div style="position: absolute; right: 0; top: 0; width: 18%; height: 100%; background-image: linear-gradient(90deg, rgba(222,200,150,0.85), rgba(250,240,215,0.95) 45%, rgba(222,200,150,0.85))"></div>
+            <div style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: #2A1A0A; opacity: {{box.shadeL}}"></div>
+          </div>
+          <div style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; transform: rotateY(180deg); background-color: #E2C9A0; background-image: linear-gradient(90deg, rgba(60,35,10,0.18), rgba(60,35,10,0) 40%); box-shadow: inset 0 0 0 1px rgba(90,60,30,0.28)"></div>
+        </div>
+      </div>
+      <div style="position: absolute; left: {{box.s}}px; top: 0; width: 0; height: 0; transform-style: preserve-3d; transform: rotateZ({{box.flapR}}deg)">
+        <div style="position: absolute; left: -{{box.h}}px; top: -{{box.h}}px; width: {{box.h}}px; height: {{box.s}}px; transform-style: preserve-3d; transform: rotateX(90deg)">
+          <div style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; background-color: #D2A673; background-image: linear-gradient(135deg, rgba(255,245,225,0.22), rgba(60,35,10,0.16)), repeating-linear-gradient(0deg, rgba(90,60,30,0.05) 0 1px, transparent 1px 6px); box-shadow: inset 0 0 0 1px rgba(90,60,30,0.32)">
+            <div style="position: absolute; left: 0; top: 0; width: 18%; height: 100%; background-image: linear-gradient(90deg, rgba(222,200,150,0.85), rgba(250,240,215,0.95) 55%, rgba(222,200,150,0.85))"></div>
+            <div style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: #2A1A0A; opacity: {{box.shadeR}}"></div>
+          </div>
+          <div style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; transform: rotateY(180deg); background-color: #E2C9A0; background-image: linear-gradient(270deg, rgba(60,35,10,0.18), rgba(60,35,10,0) 40%); box-shadow: inset 0 0 0 1px rgba(90,60,30,0.28)"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Paper scraps thrown out with the notes -->
+  <div aria-hidden="true" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 4; pointer-events: none">
+    <sc-for list="{{confetti}}" as="f" hint-placeholder-count="0">
+      <div style="position: absolute; left: {{f.left}}px; top: {{f.top}}px; width: {{f.w}}px; height: {{f.h}}px; background-color: {{f.color}}; background-image: linear-gradient(180deg, rgba(255,255,255,0.25), rgba(0,0,0,0.12)); clip-path: polygon(0 10%, 45% 0, 100% 14%, 92% 100%, 12% 88%); filter: drop-shadow(0 2px 1px rgba(40,30,20,0.25)); transform: rotate({{f.rot}}deg) scaleY({{f.flip}}); opacity: {{f.op}}"></div>
+    </sc-for>
+  </div>
+
+  <!-- Sticky notes: square paper with an adhesive strip, curled corner and a light that shifts as they tilt -->
+  <div aria-hidden="true" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 4; pointer-events: none">
+    <sc-for list="{{notes}}" as="n" hint-placeholder-count="6">
+      <div style="position: absolute; left: {{n.left}}px; top: {{n.top}}px; width: {{n.size}}px; height: {{n.size}}px; box-sizing: border-box; padding: {{n.pad}}px; display: flex; align-items: flex-end; border-radius: 1px 1px 3px 14px / 1px 1px 3px 4px; background-color: {{n.color}}; background-image: linear-gradient(180deg, rgba(0,0,0,0.09), rgba(0,0,0,0) 22%), linear-gradient(160deg, rgba(255,255,255,0.28), rgba(255,255,255,0) 45%), linear-gradient(315deg, rgba(0,0,0,0.12), rgba(0,0,0,0) 18%); box-shadow: {{n.shadow}}; transform: {{n.tf}}; filter: {{n.blur}}; opacity: {{n.op}}; font-family: 'Caveat', cursive; font-weight: 700; font-size: {{n.font}}px; line-height: 1.02; color: #1F1B16">
+        <span>{{n.t}}</span>
+        <div style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; border-radius: inherit; background-color: #2A1E10; opacity: {{n.shade}}"></div>
+        <div style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; border-radius: inherit; background-color: #FFFDF2; opacity: {{n.glint}}"></div>
+        <div style="position: absolute; left: 28%; top: -8%; width: 44%; height: 17%; background-image: linear-gradient(90deg, rgba(232,224,200,0.8), rgba(250,246,232,0.9) 45%, rgba(232,224,200,0.8)); box-shadow: 0 1px 1px rgba(0,0,0,0.1); transform: rotate({{n.tapeRot}}deg); opacity: {{n.tape}}"></div>
+      </div>
+    </sc-for>
+  </div>
+
+  <!-- A few notes fly right past the camera: big, out of focus -->
+  <div aria-hidden="true" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none">
+    <sc-for list="{{near}}" as="q" hint-placeholder-count="0">
+      <div style="position: absolute; left: {{q.left}}px; top: {{q.top}}px; width: {{q.size}}px; height: {{q.size}}px; border-radius: 1px 1px 3px 14px / 1px 1px 3px 4px; background-color: {{q.color}}; background-image: linear-gradient(180deg, rgba(0,0,0,0.09), rgba(0,0,0,0) 22%), linear-gradient(160deg, rgba(255,255,255,0.28), rgba(255,255,255,0) 45%); box-shadow: 0 30px 50px -10px rgba(40,30,20,0.35); transform: perspective(700px) rotate({{q.rot}}deg) rotateX({{q.rx}}deg) scale({{q.sc}}); filter: blur({{q.blur}}px); opacity: {{q.op}}"></div>
+    </sc-for>
+  </div>
+
+  <!-- Particles: dust in the light + twinkles around the finished title -->
+  <div aria-hidden="true" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none">
+    <sc-for list="{{motes}}" as="m" hint-placeholder-count="0">
+      <div style="position: absolute; left: {{m.left}}px; top: {{m.top}}px; width: {{m.s}}px; height: {{m.s}}px; border-radius: 50%; background-color: {{m.color}}; box-shadow: 0 0 0 1px rgba(120,100,70,0.16), 0 0 8px rgba(255,240,200,0.9); opacity: {{m.op}}"></div>
+    </sc-for>
+    <sc-for list="{{twinkles}}" as="k" hint-placeholder-count="0">
+      <div style="position: absolute; left: {{k.left}}px; top: {{k.top}}px; width: 22px; height: 22px; margin: -11px 0 0 -11px; transform: rotate({{k.rot}}deg) scale({{k.sc}}); opacity: {{k.op}}">
+        <div style="position: absolute; left: 0; top: 9.5px; width: 22px; height: 3px; border-radius: 2px; background-color: {{k.color}}; box-shadow: 0 0 0 1px rgba(40,30,20,0.18)"></div>
+        <div style="position: absolute; left: 9.5px; top: 0; width: 3px; height: 22px; border-radius: 2px; background-color: {{k.color}}; box-shadow: 0 0 0 1px rgba(40,30,20,0.18)"></div>
+      </div>
+    </sc-for>
+  </div>
+
+  </div>
+
+  <!-- Top bar -->
+  <header style="position: absolute; left: 0; right: 0; top: 0; height: {{nav.h}}px; box-sizing: border-box; padding: 0 {{nav.pad}}px; display: flex; align-items: center; justify-content: space-between; gap: 16px; z-index: 6">
+    <p style="margin: 0; display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 650">
+      <span aria-hidden="true" style="width: 16px; height: 16px; background-color: #FFE45C; transform: rotate(-6deg); box-shadow: 0 1px 2px rgba(0,0,0,0.25)"></span>
+      <span>Design Thinking Class C</span>
+      <sc-if value="{{nav.full}}" hint-placeholder-val="{{ true }}"><span style="font-weight: 450; color: #55534E">First Semester, 2026</span></sc-if>
+    </p>
+    <a href="#showcase" style="display: inline-flex; align-items: center; min-height: 44px; font-size: 15px; font-weight: 600; color: #17181A; text-underline-offset: 4px">Skip to showcase</a>
+  </header>
+
+  <!-- Scroll hint -->
+  <div style="position: absolute; left: 0; right: 0; bottom: {{hint.bottom}}px; display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: {{hint.op}}; z-index: 5; font-size: 14px; font-weight: 500; color: #55534E">
+    <span>Scroll to open the box</span>
+    <svg aria-hidden="true" width="18" height="28" viewBox="0 0 18 28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" style="transform: translateY({{hint.bob}}px)"><rect x="1" y="1" width="16" height="26" rx="8"></rect><path d="M9 7v5"></path></svg>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"progress":{"editor":"range","min":0,"max":1,"step":0.01,"default":1},"headlineFont":{"editor":"enum","options":["brush","marker","script"],"default":"brush"},"live":{"editor":"boolean","default":true},"width":{"editor":null,"default":1440},"height":{"editor":null,"default":900},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  componentDidMount() {
+    // Idle life before the first scroll: the box breathes and rattles. Stops once scrolling starts.
+    const tick = (ts) => {
+      this._raf = requestAnimationFrame(tick);
+      const p = Number(this.props.progress ?? 1);
+      if (this.props.live === false) return;
+      if (ts - (this._last || 0) < (p < 0.12 ? 33 : 42)) return;
+      this._last = ts;
+      this.setState({ t: ts / 1000 });
+    };
+    this._raf = requestAnimationFrame(tick);
+  }
+  componentWillUnmount() {
+    cancelAnimationFrame(this._raf);
+  }
+  particles({ W, H, p, t, mobile, mouth, poster, COLORS, rnd, clamp, seg }) {
+    // Dust drifting up through the window light; also nudged by scroll.
+    const motes = [];
+    for (let i = 0; i < (mobile ? 14 : 30); i++) {
+      const sp = 0.4 + rnd(i, 21) * 0.8;
+      let y = (rnd(i, 23) * H - t * 14 * sp - p * H * 0.5 * sp) % H;
+      if (y < 0) y += H;
+      motes.push({
+        left: rnd(i, 22) * W + Math.sin(t * 0.6 * sp + i) * 18, top: y,
+        s: 2 + rnd(i, 24) * 4,
+        op: 0.45 + 0.35 * Math.sin(t * 1.5 + i * 2.1),
+        color: rnd(i, 25) > 0.65 ? COLORS[i % 5] : 'rgba(255,253,245,0.95)',
+      });
+    }
+
+    // Paper scraps thrown out with the notes, then falling with gravity while they flutter.
+    const confetti = [];
+    const SCRAP = COLORS.concat(['#FBFAF6', '#C99C6A']);
+    for (let i = 0; i < (mobile ? 16 : 30); i++) {
+      const u = (p - (0.28 + rnd(i, 31) * 0.07)) / 0.32;
+      const uu = clamp(u);
+      const vx = (rnd(i, 32) - 0.5) * W * (mobile ? 1.0 : 0.8);
+      const vy = -H * (0.7 + rnd(i, 33) * 0.6);
+      const k = mobile ? 0.8 : 1;
+      confetti.push({
+        left: mouth.x + vx * uu + Math.sin(uu * 18 + i) * 12 * uu,
+        top: mouth.y + vy * uu + 1.5 * H * uu * uu,
+        w: (7 + rnd(i, 36) * 9) * k, h: (6 + rnd(i, 37) * 8) * k,
+        color: SCRAP[i % SCRAP.length],
+        rot: uu * (400 + rnd(i, 34) * 500) * (rnd(i, 35) > 0.5 ? 1 : -1),
+        flip: Math.cos(uu * 22 + i).toFixed(3),
+        op: u > 0 && u < 1 ? Math.min(1, u * 10, (1 - u) * 5) : 0,
+      });
+    }
+
+    // Twinkles around the poster once the title is written.
+    const tw = seg(0.9, 1);
+    const spots = [[-3, -5], [103, 8], [-5, 96], [102, 103], [52, -10], [46, 110], [-8, 48], [108, 54]];
+    const twinkles = spots.slice(0, mobile ? 4 : 8).map(([xp, yp], i) => {
+      const pulse = Math.abs(Math.sin(t * 1.8 + i * 1.3));
+      return {
+        left: poster.x + (poster.w * xp) / 100, top: poster.y + (poster.h * yp) / 100,
+        op: tw * (0.35 + 0.65 * pulse), sc: 0.6 + 0.5 * pulse, rot: t * 25 + i * 30, color: COLORS[i % 5],
+      };
+    });
+
+    return { motes, confetti, twinkles };
+  }
+  renderVals() {
+    const W = Number(this.props.width ?? 1440);
+    const H = Number(this.props.height ?? 900);
+    const p = Math.min(1, Math.max(0, Number(this.props.progress ?? 1)));
+    const fontKey = this.props.headlineFont ?? 'brush';
+    const mobile = W < 700;
+    const t = (this.state && this.state.t) || 0;
+
+    const clamp = (v) => Math.min(1, Math.max(0, v));
+    const seg = (a, b) => clamp((p - a) / (b - a));
+    const outCubic = (x) => 1 - Math.pow(1 - x, 3);
+    const inOut = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+    // Deterministic per-note randomness so every scroll looks the same.
+    const rnd = (i, k) => { const x = Math.sin(i * 12.9898 + k * 78.233) * 43758.5453; return x - Math.floor(x); };
+
+    // One color per Design Thinking phase: Empathize, Define, Ideate, Prototype, Test.
+    const COLORS = ['#FFE45C', '#FF8FB1', '#7CC8FF', '#8EE07A', '#FFA552'];
+    const WORDS = [
+      ['Interview 5 users', 0], ['How might we…?', 1], ['Crazy 8s', 2], ['Paper proto', 3], ['Test with users', 4],
+      ['Empathy map', 0], ['Point of view', 1], ['Brainstorm', 2], ['Storyboard', 3], ['Feedback grid', 4],
+      ['Observe', 0], ['5 Whys', 1], ['Yes, and…', 2], ['Build to think', 3], ['Iterate', 4],
+      ['Pain points', 0], ['Persona', 1], ['Wild ideas!', 2], ['MVP', 3], ['Fail early', 4],
+      ['Shadow a day', 0], ['Journey map', 1], ['Dot vote', 2], ['Role-play', 3], ['Learn', 4],
+      ['Who is it for?', 0], ['Reframe', 1], ['SCAMPER', 2],
+    ];
+    // Landing spots, % of the board. They ring the poster; four overlap its corners.
+    const PINS_D = [
+      [8, 12], [19, 15], [30, 11], [41, 14], [52, 11], [63, 15], [74, 12], [85, 15], [94, 11],
+      [7, 88], [18, 85], [29, 89], [40, 86], [51, 89], [62, 85], [73, 88], [84, 86], [94, 89],
+      [8, 33], [10, 51], [8, 69], [92, 33], [90, 51], [92, 69],
+      [23, 29], [77, 27], [24, 73], [76, 74],
+    ];
+    const PINS_M = [
+      [15, 9], [38, 10], [62, 9], [85, 10], [26, 21], [50, 22], [74, 21],
+      [26, 79], [50, 78], [74, 79], [15, 91], [38, 90], [62, 91], [85, 90],
+    ];
+
+    // Board + poster
+    const bx = mobile ? 12 : Math.max(80, (W - 1180) / 2);
+    const by = mobile ? 76 : 100;
+    const bw = W - bx * 2;
+    const bh = H - by - (mobile ? 24 : 44);
+    const tBoard = outCubic(seg(0.56, 0.7));
+    const board = { x: bx, y: by, w: bw, h: bh, frame: mobile ? 10 : 14, op: tBoard, sc: 0.94 + 0.06 * tBoard };
+    const pw = bw * (mobile ? 0.86 : 0.54);
+    const ph = bh * (mobile ? 0.38 : 0.52);
+    const poster = {
+      x: bx + (bw - pw) / 2, y: by + (bh - ph) / 2, w: pw, h: ph,
+      pad: mobile ? 18 : 32, gap: mobile ? 8 : 14, kicker: 12, tag: mobile ? 15 : 19,
+      tape: mobile ? 64 : 92, tagOp: seg(0.88, 0.96), cueOp: seg(0.94, 1),
+    };
+
+    const FONTS = {
+      brush: { f: "'Kaushan Script', cursive", s: 116, y1: 108, y2: 222, up: false },
+      marker: { f: "'Permanent Marker', cursive", s: 100, y1: 102, y2: 214, up: true },
+      script: { f: "'Pinyon Script', cursive", s: 128, y1: 108, y2: 226, up: false },
+    };
+    const F = FONTS[fontKey] || FONTS.brush;
+    // Lettering is "written" left to right: one wipe per line, the second starting as the first ends.
+    const textW = pw - 2 * (mobile ? 18 : 32);
+    const title = {
+      family: F.f, size: Math.round((textW * F.s) / 600), lh: F.up ? 1.05 : 0.98,
+      l1: F.up ? 'DESIGN' : 'Design', l2: F.up ? 'THINKING' : 'Thinking',
+    };
+    // A marker pen rides the wipe's edge while each line is being written, bobbing like handwriting.
+    [[0.76, 0.85, '1'], [0.84, 0.94, '2']].forEach(([a, b, k]) => {
+      const e = inOut(seg(a, b));
+      title['c' + k] = 108 - 116 * e;
+      title['p' + k] = Math.min(100, Math.max(0, -8 + 116 * e));
+      title['o' + k] = Math.min(1, e * 25, (1 - e) * 25);
+      title['r' + k] = 28 + Math.sin(e * 46) * 7;
+    });
+
+    // Box: idle breathing + rattle → rocks on its bottom edges, hopping → tape splits,
+    // long flaps spring open (slight overshoot) and the inner flaps follow → drops away.
+    const S = mobile ? 150 : 230;
+    const cx = W / 2;
+    const cy = H * (mobile ? 0.56 : 0.6);
+    const outBack = (x, c) => 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2);
+    const idle = 1 - seg(0.06, 0.12);
+    const bob = Math.sin(t * 2.2) * 5 * idle;
+    const rp = t % 3.4; // something inside bumps the lid every few seconds
+    const rattle = rp < 0.45 ? Math.sin(rp * 52) * 2.8 * (1 - rp / 0.45) * idle : 0;
+    const lift = rp < 0.45 ? Math.sin((rp / 0.45) * Math.PI) * 7 * idle : 0;
+    const env = Math.sin(Math.PI * seg(0.12, 0.3));
+    const hop = Math.abs(Math.sin(p * 95)) * env; // 0 = on the floor
+    const rz = Math.sin(p * 190) * 6 * env + rattle;
+    const eLong = outBack(seg(0.25, 0.32), 2.2);
+    const eLongR = outBack(seg(0.26, 0.33), 2.2);
+    const eShort = outBack(seg(0.285, 0.37), 1.6);
+    const tExit = seg(0.58, 0.7);
+    const box = {
+      x: cx - S / 2, y: cy - S / 2, s: S, h: S / 2,
+      ty: -hop * 14 + inOut(tExit) * H * 0.55 + bob,
+      rz, ox: rz >= 0 ? '100%' : '0%', // pivot on whichever bottom edge stays down
+      op: 1 - clamp((tExit - 0.4) / 0.6),
+      shadowOp: 1 - tExit, shadowY: -bob, shadowSc: 1 + bob * 0.012 - hop * 0.08,
+      contactOp: (1 - tExit) * (1 - hop * 0.85),
+      flapL: -125 * eLong - lift, flapR: 125 * eLongR + lift * 0.6,
+      flapF: -205 * eShort, flapB: 200 * eShort,
+      shadeL: 0.22 * clamp(eLong), shadeR: 0.08 * clamp(eLongR),
+      labelFont: Math.round(S * 0.075), stampFont: Math.round(S * 0.05),
+    };
+    const mouth = { x: cx, y: cy - S * 0.62 };
+    const glowT = seg(0.25, 0.46);
+    const glow = { x: mouth.x, y: mouth.y + S * 0.12, s: S * 2.6, half: S * 1.3, op: 0.9 * Math.sin(Math.PI * glowT) * (1 - tExit) };
+
+    // Dust puffs at the bottom corners, spawned at each landing during the shake.
+    const u = ((p * 95) % Math.PI) / Math.PI; // 0 = just landed
+    const dust = [];
+    for (let i = 0; i < (mobile ? 6 : 12); i++) {
+      const side = i % 2 ? 1 : -1;
+      const sz = (mobile ? 8 : 12) + rnd(i, 51) * 16 + u * 22;
+      dust.push({
+        x: cx + side * (S * 0.44 + u * (24 + rnd(i, 52) * 46)),
+        y: cy + S * 0.52 - u * (6 + rnd(i, 53) * 18),
+        s: sz, half: sz / 2, op: env > 0.08 ? env * (1 - u) * 0.75 : 0,
+      });
+    }
+
+    // Camera: push in on the box while it shakes, pull back as the notes fly, settle on the board.
+    const ck = mobile ? 0.6 : 1;
+    const push = inOut(seg(0.1, 0.32));
+    const pull = inOut(seg(0.32, 0.6));
+    const settle = inOut(seg(0.6, 0.74));
+    const camS = 1 + (0.13 * push - 0.16 * pull + 0.03 * settle) * ck;
+    const cam = {
+      o: cx + 'px ' + (cy * (1 - pull) + (H / 2) * pull) + 'px',
+      tf: 'translate(' + (Math.sin(t * 0.6) * 1.5).toFixed(2) + 'px, ' + (Math.cos(t * 0.45) * 1.2).toFixed(2) + 'px) scale(' + camS + ')',
+    };
+
+    // Notes, in three acts:
+    // 1. launch — blown out of the box, tumbling in 3D and slowed by air drag
+    // 2. drift — paper falls like a leaf: slow sink, side-to-side swing, tilting into each swing
+    // 3. stick — pulled flat onto the board; the shadow tightens as it nears, then a small wobble on contact
+    const pins = mobile ? PINS_M : PINS_D;
+    const list = mobile ? WORDS.slice(0, 14) : WORDS;
+    const size = mobile ? 56 : 92;
+    const path = (i, pp) => {
+      const dB = rnd(i, 1) * 0.1;
+      const eB = outCubic(clamp((pp - 0.3 - dB) / 0.16));
+      const tL = clamp((pp - 0.64 - rnd(i, 2) * 0.09) / 0.18);
+      const eL = inOut(tL);
+      const ax = W * (0.05 + 0.9 * rnd(i, 3));
+      const ay = H * (0.05 + (mobile ? 0.36 : 0.4) * rnd(i, 4));
+      const kx = (mouth.x + ax) / 2 + (rnd(i, 13) - 0.5) * W * 0.12;
+      const ky = Math.min(mouth.y, ay) - H * 0.22;
+      const qx = (1 - eB) * (1 - eB) * mouth.x + 2 * (1 - eB) * eB * kx + eB * eB * ax;
+      const qy = (1 - eB) * (1 - eB) * mouth.y + 2 * (1 - eB) * eB * ky + eB * eB * ay;
+      const tau = Math.max(0, pp - (0.3 + dB + 0.16)); // time since the apex
+      const ramp = Math.min(1, tau * 14);
+      const phase = tau * (48 + rnd(i, 9) * 26) + rnd(i, 10) * 6.28;
+      const fx = qx + Math.sin(phase) * (mobile ? 16 : 32) * (0.6 + rnd(i, 11) * 0.6) * ramp;
+      const fy = qy + tau * H * (0.3 + rnd(i, 12) * 0.25);
+      const pin = pins[(i * (mobile ? 5 : 11)) % pins.length];
+      const px = bx + (bw * pin[0]) / 100;
+      const py = by + (bh * pin[1]) / 100;
+      return { x: fx + (px - fx) * eL, y: fy + (py - fy) * eL, eB, tL, eL, phase, ramp };
+    };
+    const notes = list.map(([word, c], i) => {
+      const P = path(i, p);
+      const Q = path(i, Math.min(1, p + 0.004));
+      const blur = Math.min(2.5, Math.hypot(Q.x - P.x, Q.y - P.y) / 14); // motion blur from speed
+      const { eB, tL, eL, phase, ramp } = P;
+
+      const dir = rnd(i, 7) > 0.5 ? 1 : -1;
+      const r1 = (rnd(i, 5) - 0.5) * 70;
+      const rFinal = (rnd(i, 6) - 0.5) * 14;
+      const rFree = r1 + (1 - eB) * dir * 340 + Math.cos(phase) * 24 * ramp;
+      const s = clamp((tL - 0.8) / 0.2);
+      const wobble = tL > 0.8 ? Math.sin(s * Math.PI * 3) * (1 - s) * 7 : 0;
+      const rot = rFree * (1 - eL) + rFinal * eL + wobble;
+
+      const tumble = 1 - eB;
+      const rx = (Math.sin(p * 41 + i * 1.3) * 62 * tumble + Math.sin(phase + 1.2) * 34 * ramp) * (1 - eL);
+      const ry = (Math.cos(p * 33 + i) * 54 * tumble + Math.cos(phase) * 26 * ramp) * (1 - eL);
+      const rad = Math.PI / 180;
+
+      const height = eB > 0 ? 1 - eL : 0; // how far above the board the note is
+      const sc = (0.35 + 0.65 * eB) * (1 + 0.14 * Math.sin(Math.PI * eL) - 0.04 * Math.sin(Math.PI * s));
+      return {
+        t: word, color: COLORS[c], size,
+        left: P.x - size / 2, top: P.y - size / 2,
+        pad: mobile ? 6 : 9, font: mobile ? 12 : 19,
+        tf: 'perspective(700px) rotate(' + rot + 'deg) rotateX(' + rx + 'deg) rotateY(' + ry + 'deg) scale(' + sc + ')',
+        blur: blur > 0.6 ? 'blur(' + blur.toFixed(2) + 'px)' : 'none',
+        op: clamp(eB * 6),
+        shade: 0.2 * Math.abs(Math.sin(rx * rad)) + 0.12 * Math.abs(Math.sin(ry * rad)),
+        glint: 0.16 * Math.max(0, -Math.sin(rx * rad)),
+        // Airborne: soft shadow far below. On the board: tight contact shadow + the curled corner lifting off.
+        shadow: '0 ' + (2 + 26 * height) + 'px ' + (4 + 30 * height) + 'px rgba(40,30,20,' + (0.28 - 0.1 * height) + '), 0 1px 1px rgba(40,30,20,' + 0.25 * (1 - height) + '), 3px 6px 8px -5px rgba(40,30,20,' + 0.35 * (1 - height) + ')',
+        tape: clamp((tL - 0.88) / 0.12), tapeRot: (rnd(i, 8) - 0.5) * 10,
+      };
+    });
+
+    // Foreground: a few notes rush toward the camera and out of frame, out of focus.
+    const NEAR = [[-0.2, 0.15, 0], [1.2, 0.05, 2], [1.1, 1.25, 4], [-0.1, 1.2, 1]];
+    const near = NEAR.slice(0, mobile ? 2 : 4).map(([tx, ty, c], i) => {
+      const nu = seg(0.34 + i * 0.045, 0.5 + i * 0.045);
+      const ue = nu * nu;
+      return {
+        left: mouth.x + (tx * W - mouth.x) * ue - size / 2,
+        top: mouth.y + (ty * H - mouth.y) * ue - Math.sin(Math.PI * nu) * H * 0.15 - size / 2,
+        size, color: COLORS[c],
+        rot: (i % 2 ? 1 : -1) * (20 + nu * 160), rx: 30 * Math.sin(nu * 6 + i),
+        sc: 0.4 + 3.2 * ue, blur: (1.5 + 10 * ue).toFixed(1),
+        op: nu > 0 && nu < 1 ? Math.min(1, nu * 8, (1 - nu) * 6) : 0,
+      };
+    });
+
+    return {
+      W, H, board, poster, title, box, notes, near, dust, glow, cam,
+      wall: { ty: -p * 90, full: !mobile, compact: mobile },
+      nav: { h: mobile ? 60 : 76, pad: mobile ? 16 : 40, full: !mobile },
+      hint: { bottom: mobile ? 24 : 32, op: 1 - seg(0.02, 0.09), bob: Math.sin(t * 3) * 4 },
+      ...this.particles({ W, H, p, t, mobile, mouth, poster, COLORS, rnd, clamp, seg }),
+    };
+  }
+}
+</script>
+</body>
+</html>
